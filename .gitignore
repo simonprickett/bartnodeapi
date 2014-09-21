@@ -2,6 +2,11 @@
 logs
 *.log
 
+# Tmp files etc
+*.tmp
+*.bak
+*.swp
+
 # Runtime data
 pids
 *.pid
