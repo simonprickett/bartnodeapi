@@ -4,7 +4,8 @@
 	"description": "Bay Area Rapid Transit JSON API using Node and Express",
 	"dependencies": {
 		"express": "4.x",
-		"body-parser": "~1.0.0",
+		"request": "2.x",
+		"body-parser": "1.8.x",
 		"xml2js": "0.4.x",
 		"redis": "0.12.x"
 	}
