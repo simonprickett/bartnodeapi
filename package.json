@@ -1,0 +1,9 @@
+{
+	"name": "bartnodeapi",
+	"version": "0.0.1",
+	"description": "Bay Area Rapid Transit JSON API using Node and Express",
+	"dependencies": {
+		"express": "4.x",
+		"body-parser": "~1.0.0"
+	}
+}
