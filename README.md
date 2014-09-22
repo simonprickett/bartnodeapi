@@ -1,6 +1,6 @@
 #BART Node API
 
-BART JSON API using Node and Express.  Will listen on port 8888, supports JSONP.
+BART JSON API using Node and Express.  Will listen on port 8888, supports JSONP and CORS.
 
 ##Status
 
