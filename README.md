@@ -180,14 +180,14 @@ http://<hostname>:8888/api/departures/<stationId>
 		"departures":[
 			{
 				"color":"BLUE",
-				"estimate":"15 mins",
+				"estimate":"Boarding",
 				"cars":4,
 				"platform":2,
 				"bikeFlag":1
 			},
 			{
 				"color":"BLUE",
-				"estimate":"Boarding",
+				"estimate":"15 mins",
 				"cars":6,
 				"platform":2,
 				"bikeFlag":1
