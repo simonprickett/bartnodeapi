@@ -32,6 +32,8 @@ node server.js
 
 All calls support JSONP, just add callback=&lt;function name&gt; to the URL.
 
+All calls can be made using CORS (see http://enable-cors.org).
+
 ###GET BART System Status
 
 Returns basic information about the state of BART.
