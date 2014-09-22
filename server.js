@@ -113,7 +113,7 @@ router.route('/departures/:stationId').get(
 				departures: [
 					{
 						color: "BLUE",
-						estimate: "15 mins",
+						estimate: "Boarding",
 						cars: 8,
 						platform: 1,
 						bikeFlag: 1
