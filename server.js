@@ -1,4 +1,5 @@
 var express = require('express');
+var cors = require('cors');
 var app = express();
 var router = express.Router();
 var port = process.env.PORT || 8888;
@@ -167,6 +168,7 @@ router.route('/tickets/:fromStation/:toStation').get(
 	}
 ); 
 
+app.use(cors());
 app.use('/api', router);
 app.listen(port);
 console.log('BART API Server listening on port ' + port);
