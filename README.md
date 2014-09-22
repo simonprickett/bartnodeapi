@@ -30,9 +30,8 @@ node server.js
 
 ##Example Calls and Responses
 
-All calls support JSONP, just add callback=&lt;function name&gt; to the URL.
-
-All calls can be made using CORS (see http://enable-cors.org).
+* All calls support JSONP, just add callback=&lt;function name&gt; to the URL.
+* All calls can be made using CORS (see http://enable-cors.org).
 
 ###GET BART System Status
 
@@ -188,7 +187,7 @@ http://<hostname>:8888/api/departures/<stationId>
 			},
 			{
 				"color":"BLUE",
-				"estimate":"27 mins",
+				"estimate":"Boarding",
 				"cars":6,
 				"platform":2,
 				"bikeFlag":1
