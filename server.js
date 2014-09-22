@@ -32,7 +32,8 @@ router.route('/stations').get(
 					street: "1245 Broadway",
 					city: "Oakland",
 					state: "CA",
-					zipCode: "94612"
+					zipCode: "94612",
+					country: "USA"
 				},
 				description: "12th St. Oakland City Center Station is in the heart of Downtown Oakland, near historic Old Oakland and Oakland's Chinatown."
 			},
@@ -46,7 +47,8 @@ router.route('/stations').get(
 					street: "899 Market Street",
 					city: "San Francisco",
 					state: "CA",
-					zipCode: "94102"
+					zipCode: "94102",
+					country: "USA"
 				},
 				description: "Located at Powell and Market Streets, this station is centrally located near San Francisco's most popular attractions including the cable cars, Union Square, Yerba Buena Gardens, the Moscone Convention Center and the City's Theatre District."
 			}
@@ -68,7 +70,8 @@ router.route('/stations/:stationId').get(
 				street: "899 Market Street",
 				city: "San Francisco",
 				state: "CA",
-				zipCode: "94102"
+				zipCode: "94102",
+				country: "USA"
 			},
 			description: "Located at Powell and Market Streets, this station is centrally located near San Francisco's most popular attractions including the cable cars, Union Square, Yerba Buena Gardens, the Moscone Convention Center and the City's Theatre District."
 		};
@@ -89,7 +92,8 @@ router.route('/stations/:latitude/:longitude').get(
 				street: "899 Market Street",
 				city: "San Francisco",
 				state: "CA",
-				zipCode: "94102"
+				zipCode: "94102",
+				country: "USA"
 			},
 			description: "Located at Powell and Market Streets, this station is centrally located near San Francisco's most popular attractions including the cable cars, Union Square, Yerba Buena Gardens, the Moscone Convention Center and the City's Theatre District.",
 			distance: 22.2,
