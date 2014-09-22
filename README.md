@@ -30,7 +30,7 @@ node server.js
 
 ##Example Calls
 
-All calls support JSONP, just add callback=<function name> to the URL.
+All calls support JSONP, just add callback=&lt;function name&gt; to the URL.
 
 ###GET BART System Status
 
