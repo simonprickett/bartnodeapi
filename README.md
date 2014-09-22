@@ -207,7 +207,7 @@ http://<hostname>:8888/api/tickets/<fromStationId>/<toStationId>
 	"toId":"DUBL",
 	"toStation":"Dublin/Pleasanton",
 	"fare": "6.45",
-	"clipperFare": "2.4",
+	"clipperFare": "2.40",
 	"fareCurrency": "USD",
 	"emissions":23.3,
 	"legs":[
