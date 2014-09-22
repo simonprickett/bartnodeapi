@@ -155,8 +155,9 @@ router.route('/tickets/:fromStation/:toStation').get(
 			fromStation: "Pittsburg/Bay Point",
 			toId: "DUBL",
 			toStation: "Dublin/Pleasanton",
-			fare: 6.45,
-			clipper: 2.40,
+			fare: "6.45",
+			clipperFare: "2.40",
+			fareCurrency: "USD",
 			emissions: 23.3,
 			legs: [
         		"At Pittsburg/Bay Point board train to San Francisco Int'l Airport change at MacArthur.",

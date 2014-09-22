@@ -206,8 +206,9 @@ http://<hostname>:8888/api/tickets/<fromStationId>/<toStationId>
 	"fromStation":"Pittsburg/Bay Point",
 	"toId":"DUBL",
 	"toStation":"Dublin/Pleasanton",
-	"fare":6.45,
-	"clipper":2.4,
+	"fare": "6.45",
+	"clipperFare": "2.4",
+	"fareCurrency": "USD",
 	"emissions":23.3,
 	"legs":[
 		"At Pittsburg/Bay Point board train to San Francisco Int'l Airport change at MacArthur.",
