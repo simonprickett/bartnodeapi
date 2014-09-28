@@ -53,6 +53,8 @@ http://<hostname>:8888/api/status
 }
 ```
 
+* TODO: Field by field explanation of the response
+
 ###GET All Station Details
 
 Returns overview details and ID codes for all stations.
@@ -97,6 +99,8 @@ http://<hostname>:8888/api/stations
 ]
 ```
 
+* TODO: Field by field explanation of the response
+
 ###GET an Individual Station's Details
 
 ```
@@ -120,6 +124,8 @@ http://<hostname>:8888/api/stations/<stationId>
 	"description":"Located at Powell and Market Streets, this station is centrally located near San Francisco's most popular attractions including the cable cars, Union Square, Yerba Buena Gardens, the Moscone Convention Center and the City's Theatre District."
 }
 ```
+
+* TODO: Field by field explanation of the response
 
 ###GET Details for the Station Closest to a Point
 
@@ -146,6 +152,9 @@ http://<hostname>:8888/api/stations/<latitude>/<longitude>
 	"distanceUnits":"miles"
 }
 ```
+
+* TODO: Field by field explanation of the response
+
 ###GET Train Departures from an Individual Station
 
 ```
@@ -197,6 +206,8 @@ http://<hostname>:8888/api/departures/<stationId>
 ]
 ```
 
+* TODO: Field by field explanation of the response
+
 ###GET Ticket Price and Trip Details Between Two Stations
 
 ```
@@ -220,3 +231,5 @@ http://<hostname>:8888/api/tickets/<fromStationId>/<toStationId>
 	]
 }
 ```
+
+* TODO: Field by field explanation of the response
