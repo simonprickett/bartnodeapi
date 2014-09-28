@@ -1,8 +1,10 @@
 var express = require('express');
 var cors = require('cors');
+var request = require('request');
 var app = express();
 var router = express.Router();
 var port = process.env.PORT || 8888;
+var bartApiKey = 'MW9S-E7SL-26DU-VV8V';
 
 router.route('/status').get(
 	function(request, response) {
