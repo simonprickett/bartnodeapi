@@ -30,8 +30,9 @@ node server.js
 
 ##Example Calls and Responses
 
-* All calls support JSONP, just add callback=&lt;function name&gt; to the URL.
-* All calls can be made using CORS (see http://enable-cors.org).
+* All calls support JSONP, just add callback=&lt;function name&gt; to the URL
+* All calls can be made using CORS (see http://enable-cors.org)
+* The backend XML API that this uses is documented at http://api.bart.gov/
 
 ###GET BART System Status
 
