@@ -8,6 +8,7 @@ var port = process.env.PORT || 8888;
 var bartApiKey = 'MW9S-E7SL-26DU-VV8V';
 
 router.route('/status').get(
+	// http://api.bart.gov/api/bsa.aspx?cmd=count&key=
 	function(request, response) {
 		var status = {
 			lastUpdated: "07:21:48 PM",
@@ -87,6 +88,7 @@ router.route('/stations/:latitude/:longitude').get(
 );
 
 router.route('/departures/:stationId').get(
+	// http://api.bart.gov/api/etd.aspx?cmd=etd&orig=ALL&key=
 	function(request, response) {
 		var departures = [
 			{
@@ -135,6 +137,7 @@ router.route('/departures/:stationId').get(
 );
 
 router.route('/tickets/:fromStation/:toStation').get(
+	// http://api.bart.gov/api/sched.aspx?cmd=depart&orig=${fromStation}&dest=${toStation}&time=9:00am&b=0&a=1&key=
 	function(request, response) {
 		var routeData = {
 			fromId: "PITT",
