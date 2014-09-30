@@ -33,46 +33,10 @@ router.route('/stations').get(
 			maxRedirects: 10
 		}, function(error, resp, body) {
 			// TODO non-happy path
-			// TODO needs some options to clean up results see:
-			// https://www.npmjs.org/package/xml2js
-			var xmlStations = xmlParser.parseString(body, function(err, res) {
-				response.jsonp(res);
+			var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				response.jsonp(res.root.stations.station);
 			});
 		});
-/*
-		var stations = [{
-				id: "12TH",
-				name: "12th St. Oakland City Center",
-				fourSquareId: "468eecfdf964a5208f481fe3",
-				latitude: 37.803664,
-				longitude: -122.271604,
-				address: {
-					street: "1245 Broadway",
-					city: "Oakland",
-					state: "CA",
-					zipCode: "94612",
-					country: "USA"
-				},
-				description: "12th St. Oakland City Center Station is in the heart of Downtown Oakland, near historic Old Oakland and Oakland's Chinatown."
-			},
-			{
-				id: "POWL",
-				name: "Powell St.",
-				fourSquareId: "455f7871f964a520913d1fe3",
-				latitude: 37.784991,
-				longitude: -122.406857,
-				address: {
-					street: "899 Market Street",
-					city: "San Francisco",
-					state: "CA",
-					zipCode: "94102",
-					country: "USA"
-				},
-				description: "Located at Powell and Market Streets, this station is centrally located near San Francisco's most popular attractions including the cable cars, Union Square, Yerba Buena Gardens, the Moscone Convention Center and the City's Theatre District."
-			}
-		];
-		response.jsonp(stations);
-		*/
 	}
 );
 
