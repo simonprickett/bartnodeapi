@@ -1,6 +1,7 @@
 var express = require('express');
 var cors = require('cors');
-var request = require('request');
+var httpRequest = require('request');
+var xmlParser = require('xml2js');
 var app = express();
 var router = express.Router();
 var port = process.env.PORT || 8888;
@@ -24,6 +25,21 @@ router.route('/status').get(
 
 router.route('/stations').get(
 	function(request, response) {
+		httpRequest({
+			uri: 'http://api.bart.gov/api/stn.aspx?cmd=stns&key=' + bartApiKey,
+			method: 'GET',
+			timeout: 10000,
+			followRedirect: true,
+			maxRedirects: 10
+		}, function(error, resp, body) {
+			// TODO non-happy path
+			// TODO needs some options to clean up results see:
+			// https://www.npmjs.org/package/xml2js
+			var xmlStations = xmlParser.parseString(body, function(err, res) {
+				response.jsonp(res);
+			});
+		});
+/*
 		var stations = [{
 				id: "12TH",
 				name: "12th St. Oakland City Center",
@@ -55,8 +71,8 @@ router.route('/stations').get(
 				description: "Located at Powell and Market Streets, this station is centrally located near San Francisco's most popular attractions including the cable cars, Union Square, Yerba Buena Gardens, the Moscone Convention Center and the City's Theatre District."
 			}
 		];
-
 		response.jsonp(stations);
+		*/
 	}
 );
 
