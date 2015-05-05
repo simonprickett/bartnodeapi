@@ -7,20 +7,35 @@ var router = express.Router();
 var port = process.env.PORT || 8888;
 var bartApiKey = 'MW9S-E7SL-26DU-VV8V';
 
-router.route('/status').get(
-	// http://api.bart.gov/api/bsa.aspx?cmd=count&key=
-	function(request, response) {
-		var status = {
-			lastUpdated: "07:21:48 PM",
-			trainCount: 48,
-			advisories: [
-				{ 
-					"advisoryText": "There is a delay developing at Fremont on the Fremont Line in the Fremont, Richmond and San Francisco directions due to an equipment problem on a train."
-				}
-			]
-		};
+var stationsInfo = undefined;
 
-		response.jsonp(status);
+var infoCache = {
+	stationList : undefined,
+
+	getStationList: function() {
+		console.log('Hello from getStationList');
+		return stationList;
+	},
+
+	updateStationList: function() {
+		console.log('Hello from updateStationList');
+	},
+}; 
+
+router.route('/status').get(
+	function(request, response) {
+		httpRequest({
+			uri: 'http://api.bart.gov/api/bsa.aspx?cmd=count&key=' + bartApiKey,
+			method: 'GET',
+			timeout: 10000,
+			followRedirect: true,
+			maxRedirects: 10
+		}, function(error, resp, body) {
+			// TODO non-happy path
+			var xmlStatus = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				response.jsonp(res.root);
+			});
+		});
 	}
 );
 
@@ -35,6 +50,7 @@ router.route('/stations').get(
 		}, function(error, resp, body) {
 			// TODO non-happy path
 			var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				infoCache.updateStationList(xmlStations);
 				response.jsonp(res.root.stations.station);
 			});
 		});
@@ -88,73 +104,36 @@ router.route('/stations/:latitude/:longitude').get(
 );
 
 router.route('/departures/:stationId').get(
-	// http://api.bart.gov/api/etd.aspx?cmd=etd&orig=ALL&key=
 	function(request, response) {
-		var departures = [
-			{
-				destinationId: "DALY",
-				destination: "Daly City",
-				departures: [
-					{
-						color: "BLUE",
-						estimate: "Boarding",
-						cars: 8,
-						platform: 1,
-						bikeFlag: 1
-					},
-					{
-						color: "BLUE",
-						estimate: "35 mins",
-						cars: 6,
-						platform: 1,
-						bikeFlag: 1
-					}
-				]
-			},
-			{
-				destinationId: "DUBL",
-				destination: "Dublin/Pleasanton",
-				departures: [
-					{
-						color: "BLUE",
-						estimate: "15 mins",
-						cars: 4,
-						platform: 2,
-						bikeFlag: 1
-					},
-					{
-						color: "BLUE",
-						estimate: "27 mins",
-						cars: 6,
-						platform: 2,
-						bikeFlag: 1
-					}
-				]
-			}
-		];
-		response.jsonp(departures);
+		httpRequest({
+			uri: 'http://api.bart.gov/api/etd.aspx?cmd=etd&orig=' + request.param('stationId') + '&key=' + bartApiKey,
+			method: 'GET',
+			timeout: 10000,
+			followRedirect: true,
+			maxRedirects: 10
+		}, function(error, resp, body) {
+			// TODO non-happy path
+			var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				response.jsonp(res.root.station);
+			});
+		});
 	}
 );
 
 router.route('/tickets/:fromStation/:toStation').get(
-	// http://api.bart.gov/api/sched.aspx?cmd=depart&orig=${fromStation}&dest=${toStation}&time=9:00am&b=0&a=1&key=
 	function(request, response) {
-		var routeData = {
-			fromId: "PITT",
-			fromStation: "Pittsburg/Bay Point",
-			toId: "DUBL",
-			toStation: "Dublin/Pleasanton",
-			fare: "6.45",
-			clipperFare: "2.40",
-			fareCurrency: "USD",
-			emissions: 23.3,
-			legs: [
-        		"At Pittsburg/Bay Point board train to San Francisco Int'l Airport change at MacArthur.",
-				"At MacArthur board train to Fremont change at Bay Fair.",
-				"At Bay Fair board train to Dublin/Pleasanton alight at Dublin/Pleasanton."
-			]
-		};
-		response.jsonp(routeData);
+		httpRequest({
+			uri: 'http://api.bart.gov/api/sched.aspx?cmd=depart&orig=' + request.param('fromStation') + '&dest=' + request.param('toStation') + '&time=9:00am' + '&b=0&a=1&key=' + bartApiKey,
+			method: 'GET',
+			timeout: 10000,
+			followRedirect: true,
+			maxRedirects: 10
+		}, function(error, resp, body) {
+			// TODO non-happy path
+			var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				response.jsonp(res.root);
+			});
+		});
 	}
 ); 
 
