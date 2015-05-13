@@ -2,9 +2,14 @@ var express = require('express');
 var cors = require('cors');
 var httpRequest = require('request');
 var xmlParser = require('xml2js');
+var path = require('path');
 var app = express();
 var router = express.Router();
+var every = require('schedule').every;
+
+var htmlDir = './html/';
 var port = process.env.PORT || 8888;
+// TODO - put this in the environment!
 var bartApiKey = 'MW9S-E7SL-26DU-VV8V';
 
 var stationsInfo = undefined;
@@ -13,14 +18,36 @@ var infoCache = {
 	stationList : undefined,
 
 	getStationList: function() {
-		console.log('Hello from getStationList');
 		return stationList;
 	},
 
-	updateStationList: function() {
-		console.log('Hello from updateStationList');
+	updateStationList: function(newStationList) {
+		stationList = newStationList;
 	},
 }; 
+
+loadStationList = function() {
+	console.log('Refreshing Station List cache...');
+	httpRequest({
+		uri: 'http://api.bart.gov/api/stn.aspx?cmd=stns&key=' + bartApiKey,
+		method: 'GET',
+		timeout: 10000,
+		followRedirect: true,
+		maxRedirects: 10
+	}, function(error, resp, body) {
+		// TODO non-happy path
+		xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+			infoCache.updateStationList(res.root.stations);
+			console.log('Station List cache refreshed.');
+		});
+	});
+};
+
+router.route('/').get(
+	function(request, response) {
+		response.sendFile('index.html', { root: path.join(__dirname, './html') });
+	}
+);
 
 router.route('/status').get(
 	function(request, response) {
@@ -41,44 +68,25 @@ router.route('/status').get(
 
 router.route('/stations').get(
 	function(request, response) {
-		httpRequest({
-			uri: 'http://api.bart.gov/api/stn.aspx?cmd=stns&key=' + bartApiKey,
-			method: 'GET',
-			timeout: 10000,
-			followRedirect: true,
-			maxRedirects: 10
-		}, function(error, resp, body) {
-			// TODO non-happy path
-			var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
-				infoCache.updateStationList(xmlStations);
-				response.jsonp(res.root.stations.station);
-			});
-		});
+		response.jsonp(infoCache.getStationList().station);
 	}
 );
 
-router.route('/stations/:stationId').get(
+router.route('/station/:stationId').get(
 	function(request, response) {
-		var station = {
-			id: "POWL",
-			name: "Powell St.",
-			fourSquareId: "455f7871f964a520913d1fe3",
-			latitude: 37.784991,
-			longitude: -122.406857,
-			address: {
-				street: "899 Market Street",
-				city: "San Francisco",
-				state: "CA",
-				zipCode: "94102",
-				country: "USA"
-			},
-			description: "Located at Powell and Market Streets, this station is centrally located near San Francisco's most popular attractions including the cable cars, Union Square, Yerba Buena Gardens, the Moscone Convention Center and the City's Theatre District."
-		};
+		var stations = infoCache.getStationList().station;
 
-		response.jsonp(station);
+		for (var n = 0; n < stations.length; n++) {
+			var thisStation = stations[n];
+			if (thisStation.abbr === request.params.stationId) {
+				response.jsonp(thisStation);
+				break;
+			}
+		}
 	}
 );
 
+// TODO make this real
 router.route('/stations/:latitude/:longitude').get(
 	function(request, response) {
 		var station = {
@@ -136,6 +144,12 @@ router.route('/tickets/:fromStation/:toStation').get(
 		});
 	}
 ); 
+
+// Prime the station list on startup and read periodically
+loadStationList();
+every('24h').do(function() {
+	loadStationList();
+});
 
 app.use(cors());
 app.use('/api', router);

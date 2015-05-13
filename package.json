@@ -8,6 +8,6 @@
 		"request": "2.x",
 		"body-parser": "1.8.x",
 		"xml2js": "0.4.x",
-		"redis": "0.12.x"
+		"schedule": "0.1.0"
 	}
 }
