@@ -9,8 +9,8 @@ var every = require('schedule').every;
 
 var htmlDir = './html/';
 var port = process.env.PORT || 8888;
-// TODO - put this in the environment!
-var bartApiKey = 'MW9S-E7SL-26DU-VV8V';
+// This is a demo key use environment if possible
+var bartApiKey = process.env.BART_API_KEY || 'MW9S-E7SL-26DU-VV8V';
 
 var stationsInfo = undefined;
 
@@ -127,6 +127,8 @@ router.route('/stations/:latitude/:longitude').get(
 	}
 );
 
+// TODO work on station info
+// http://api.bart.gov/api/stn.aspx?cmd=stninfo&orig=24th&key=MW9S-E7SL-26DU-VV8V
 
 router.route('/departures/:stationId').get(
 	function(request, response) {
