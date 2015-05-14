@@ -52,7 +52,7 @@ getDistance = function(latUser, lonUser, latStation, lonStation) {
         	Math.sin(dLon / 2) * Math.sin(dLon / 2);
 	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 	var d = R * c;
-	
+
 	return d;
 };
 
@@ -99,30 +99,34 @@ router.route('/station/:stationId').get(
 	}
 );
 
-// TODO make this real
-router.route('/stations/:latitude/:longitude').get(
+// TODO make this real, return single closest station
+router.route('/station/:latitude/:longitude').get(
 	function(request, response) {
-		var station = {
-			id: "POWL",
-			name: "Powell St.",
-			fourSquareId: "455f7871f964a520913d1fe3",
-			latitude: 37.784991,
-			longitude: -122.406857,
-			address: {
-				street: "899 Market Street",
-				city: "San Francisco",
-				state: "CA",
-				zipCode: "94102",
-				country: "USA"
-			},
-			description: "Located at Powell and Market Streets, this station is centrally located near San Francisco's most popular attractions including the cable cars, Union Square, Yerba Buena Gardens, the Moscone Convention Center and the City's Theatre District.",
-			distance: 22.2,
-			distanceUnits: "miles"
-		}
+		var stations = infoCache.getStationList().station;
+		var closestStationAbbr = "FTVL";
 
-		response.jsonp(station);
+		for (var n = 0; n < stations.length; n++) {
+			var thisStation = stations[n];
+			if (thisStation.abbr === closestStationAbbr) {
+				// TODO Add distance field!
+				response.jsonp(thisStation);
+				break;
+			}
+		}
 	}
 );
+
+// TODO make this real, return all stations with distances and isClosest set
+router.route('/stations/:latitude/:longitude').get(
+	function(request, response) {
+		var stations = infoCache.getStationList().station;
+		var closestStationAbbr = "FTVL";
+
+		// TODO sorting and stuff
+		response.jsonp(infoCache.getStationList().station);
+	}
+);
+
 
 router.route('/departures/:stationId').get(
 	function(request, response) {
