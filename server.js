@@ -130,6 +130,9 @@ router.route('/stations/:latitude/:longitude').get(
 // TODO work on station info
 // http://api.bart.gov/api/stn.aspx?cmd=stninfo&orig=24th&key=MW9S-E7SL-26DU-VV8V
 
+// TODO work on station access l=1 show legend, l=0 suppresses
+// http://api.bart.gov/api/stn.aspx?cmd=stnaccess&orig=12th&key=MW9S-E7SL-26DU-VV8V&l=1
+
 router.route('/departures/:stationId').get(
 	function(request, response) {
 		httpRequest({
