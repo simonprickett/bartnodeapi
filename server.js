@@ -79,6 +79,23 @@ router.route('/status').get(
 	}
 );
 
+router.route('/serviceAnnouncements').get(
+	function(request, response) {
+		httpRequest({
+			uri: 'http://api.bart.gov/api/bsa.aspx?cmd=bsa&date=today&key=' + bartApiKey,
+			method: 'GET',
+			timeout: 10000,
+			followRedirect: true,
+			maxRedirects: 10
+		}, function(error, resp, body) {
+			// TODO non happy path
+			var xmlServiceAnnouncements = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				response.jsonp(res.root);
+			});
+		});
+	}
+);
+
 router.route('/stations').get(
 	function(request, response) {
 		response.jsonp(infoCache.getStationList().station);
