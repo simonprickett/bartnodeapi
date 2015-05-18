@@ -4,8 +4,7 @@ BART JSON API using Node and Express.  Will listen on port 8888, supports JSONP 
 
 ##Status
 
-* Right now, this is an API facade
-* Responses are hard coded
+* Responses documented here are not currently accurate, this doc needs updating.
 
 ##Installation
 
