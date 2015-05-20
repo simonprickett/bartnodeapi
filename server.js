@@ -252,6 +252,24 @@ router.route('/tickets/:fromStation/:toStation').get(
 	}
 ); 
 
+// TODO cache for a while?
+router.route('/elevatorStatus').get(
+	function(request, response) {
+		httpRequest({
+			uri: 'http://api.bart.gov/api/bsa.aspx?cmd=elev&key=' + bartApiKey,
+			method: 'GET',
+			timeout: 10000,
+			followRedirect: true,
+			maxRedirects: 10
+		}, function(error, resp, body) {
+			// TODO non-happy path
+			var xmlElevators = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				response.jsonp(res.root);
+			});
+		});
+	}
+);
+
 // Prime the station list on startup and read periodically
 loadStationList();
 every('24h').do(function() {
