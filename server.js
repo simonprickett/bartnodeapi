@@ -5,6 +5,7 @@ var xmlParser = require('xml2js');
 var path = require('path');
 var app = express();
 var router = express.Router();
+var async = require('async');
 var every = require('schedule').every;
 
 var htmlDir = './html/';
@@ -15,7 +16,8 @@ var bartApiKey = process.env.BART_API_KEY || 'MW9S-E7SL-26DU-VV8V';
 var stationsInfo = undefined;
 
 var infoCache = {
-	stationList : undefined,
+	stationList: undefined,
+	stationDetails: undefined,
 
 	getStationList: function() {
 		return stationList;
@@ -24,6 +26,14 @@ var infoCache = {
 	updateStationList: function(newStationList) {
 		stationList = newStationList;
 	},
+
+	getStationDetails: function() {
+		return stationDetails;
+	},
+
+	updateStationDetails: function(newStationDetails) {
+		stationDetails = newStationDetails;
+	}
 }; 
 
 loadStationList = function() {
@@ -39,8 +49,45 @@ loadStationList = function() {
 		xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
 			infoCache.updateStationList(res.root.stations);
 			console.log('Station List cache refreshed.');
+			getStationInfo();
 		});
 	});
+};
+
+getStationInfo = function() {
+	var stations = infoCache.getStationList().station;
+	var stationInfoURLs = [];
+	var stationDetails = [];
+
+	console.log('Getting station information...');
+
+	for (var n = 0; n < stations.length; n++) {
+		var thisStation = stations[n];
+		stationInfoURLs.push('http://api.bart.gov/api/stn.aspx?cmd=stnaccess&orig=' + thisStation.abbr + '&key=' + bartApiKey);
+	}
+
+	async.each(
+		stationInfoURLs, 
+		function(stationInfoURL, callback) {
+			httpRequest({
+				uri: stationInfoURL,
+				method: 'GET',
+				timeout: 10000,
+				followRediect: true,
+				maxRedirects: 10
+			}, function(error, resp, body) {
+				xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+					stationDetails.push(res.root.stations.station);
+					callback();
+				});
+			});
+		},
+		function(err) {
+			infoCache.updateStationDetails(stationDetails);
+			console.log('Station Details cache refreshed.');
+		}
+	);
+
 };
 
 getDistance = function(latUser, lonUser, latStation, lonStation) {
@@ -108,6 +155,26 @@ router.route('/station/:stationId').get(
 
 		for (var n = 0; n < stations.length; n++) {
 			var thisStation = stations[n];
+			if (thisStation.abbr === request.params.stationId) {
+				response.jsonp(thisStation);
+				break;
+			}
+		}
+	}
+);
+
+router.route('/stationDetails').get(
+	function(request, response) {
+		response.jsonp(infoCache.getStationDetails());
+	}
+);
+
+router.route('/stationDetails/:stationId').get(
+	function(request, response) {
+		var stationDetails = infoCache.getStationDetails();
+
+		for (var n = 0; n < stationDetails.length; n++) {
+			var thisStation = stationDetails[n];
 			if (thisStation.abbr === request.params.stationId) {
 				response.jsonp(thisStation);
 				break;

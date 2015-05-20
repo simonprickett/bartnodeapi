@@ -8,6 +8,7 @@
 		"request": "2.x",
 		"body-parser": "1.8.x",
 		"xml2js": "0.4.x",
-		"schedule": "0.1.0"
+		"schedule": "0.1.0",
+		"async": "0.9.2"
 	}
 }
