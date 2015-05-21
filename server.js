@@ -63,7 +63,7 @@ function loadElevatorStatus() {
 		buildHttpRequestOptions('bsa.aspx?cmd=elev'),
 		function(error, resp, body) {
 			// TODO non-happy path
-			xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+			xmlParser.parseString(body, { trim: true, explicitArray: false, attrkey: 'id' }, function(err, res) {
 				infoCache.updateElevatorStatus(res.root);
 				console.log('Elevator status cache refreshed.');
 			});
@@ -104,7 +104,7 @@ function getStationInfo() {
 			httpRequest(
 				buildHttpRequestOptions(stationInfoURL),
 				function(error, resp, body) {
-					xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+					xmlParser.parseString(body, { trim: true, explicitArray: false, attrkey: 'flags' }, function(err, res) {
 						stationDetails.push(res.root.stations.station);
 						callback();
 					});
@@ -262,7 +262,7 @@ router.route('/tickets/:fromStation/:toStation').get(
 			buildHttpRequestOptions('sched.aspx?cmd=depart&orig=' + request.param('fromStation') + '&dest=' + request.param('toStation') + '&time=9:00am&b=0&a=1'),
 			function(error, resp, body) {
 				// TODO non-happy path
-				var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false, attrkey: 'details' }, function(err, res) {
 					response.jsonp(res.root);
 				});
 			}
