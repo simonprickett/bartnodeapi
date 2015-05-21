@@ -47,6 +47,19 @@ var infoCache = {
 	}
 }; 
 
+function getDistance(latUser, lonUser, latStation, lonStation) {
+	var R = 6371;
+	var dLat = (latStation - latUser).toRad();
+	var dLon = (lonStation - lonUser).toRad();
+	var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        	Math.cos(latStation.toRad()) * Math.cos(latUser.toRad()) *
+        	Math.sin(dLon / 2) * Math.sin(dLon / 2);
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	var d = R * c;
+
+	return d * 0.621371;
+};
+
 function buildHttpRequestOptions(requestUrl) {
 	return {
 		uri: bartApiBaseUrl + '/' + requestUrl + '&key=' + bartApiKey,
@@ -116,21 +129,6 @@ function getStationInfo() {
 			console.log('Station Details cache refreshed.');
 		}
 	);
-
-};
-
-// TODO: use this!
-function getDistance(latUser, lonUser, latStation, lonStation) {
-	var R = 6371;
-	var dLat = (latStation - latUser).toRad();
-	var dLon = (lonStation - lonUser).toRad();
-	var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        	Math.cos(latStation.toRad()) * Math.cos(latUser.toRad()) *
-        	Math.sin(dLon / 2) * Math.sin(dLon / 2);
-	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-	var d = R * c;
-
-	return d;
 };
 
 router.route('/').get(
@@ -207,7 +205,6 @@ router.route('/stationDetails/:stationId').get(
 	}
 );
 
-// TODO make this real, return single closest station
 router.route('/station/:latitude/:longitude').get(
 	function(request, response) {
 		var stations = infoCache.getStationList().station;
@@ -230,11 +227,9 @@ router.route('/station/:latitude/:longitude').get(
 	}
 );
 
-// TODO make this real, return all stations with distances and isClosest set
 router.route('/stations/:latitude/:longitude').get(
 	function(request, response) {
 		var stations = JSON.parse(JSON.stringify(infoCache.getStationList().station));
-		var closestStationAbbr = "FTVL";
 		var userLatitude = parseFloat(request.params.latitude);
 		var userLongitude = parseFloat(request.params.longitude);
 
@@ -247,14 +242,12 @@ router.route('/stations/:latitude/:longitude').get(
 			if (a.distance > b.distance) {
 				return 1;
 			}
-
 			if (a.distance < b.distance) {
 				return -1;
 			}
-
 			return 0;
 		});
-		// TODO sorting and stuff
+
 		response.jsonp(stations);
 	}
 );
@@ -296,7 +289,7 @@ router.route('/elevatorStatus').get(
 
 if (typeof(Number.prototype.toRad) === "undefined") {
   Number.prototype.toRad = function() {
-    return this * Math.PI / 180;
+    return this * (Math.PI / 180);
   }
 }
 
