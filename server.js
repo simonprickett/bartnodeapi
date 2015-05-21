@@ -20,6 +20,7 @@ var stationsInfo = undefined;
 var infoCache = {
 	stationList: undefined,
 	stationDetails: undefined,
+	elevatorStatus: undefined,
 
 	getStationList: function() {
 		return stationList;
@@ -35,6 +36,14 @@ var infoCache = {
 
 	updateStationDetails: function(newStationDetails) {
 		stationDetails = newStationDetails;
+	},
+
+	getElevatorStatus: function() {
+		return elevatorStatus;
+	},
+
+	updateElevatorStatus: function(newElevatorStatus) {
+		elevatorStatus = newElevatorStatus;
 	}
 }; 
 
@@ -47,6 +56,20 @@ function buildHttpRequestOptions(requestUrl) {
 		maxRedirects: 10
 	};
 };
+
+function loadElevatorStatus() {
+	console.log('Refreshing Elevator status cache...');
+	httpRequest(
+		buildHttpRequestOptions('bsa.aspx?cmd=elev'),
+		function(error, resp, body) {
+			// TODO non-happy path
+			xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				infoCache.updateElevatorStatus(res.root);
+				console.log('Elevator status cache refreshed.');
+			});
+		}
+	);
+}
 
 function loadStationList() {
 	console.log('Refreshing Station List cache...');
@@ -96,6 +119,7 @@ function getStationInfo() {
 
 };
 
+// TODO: use this!
 function getDistance(latUser, lonUser, latStation, lonStation) {
 	var R = 6371;
 	var dLat = (latStation - latUser).toRad();
@@ -211,12 +235,6 @@ router.route('/stations/:latitude/:longitude').get(
 	}
 );
 
-// TODO work on station info
-// http://api.bart.gov/api/stn.aspx?cmd=stninfo&orig=24th&key=MW9S-E7SL-26DU-VV8V
-
-// TODO work on station access l=1 show legend, l=0 suppresses
-// http://api.bart.gov/api/stn.aspx?cmd=stnaccess&orig=12th&key=MW9S-E7SL-26DU-VV8V&l=1
-
 router.route('/departures/:stationId').get(
 	function(request, response) {
 		httpRequest(
@@ -231,7 +249,7 @@ router.route('/departures/:stationId').get(
 	}
 );
 
-// TODO Add the option to specify time/date?
+// TODO Add the option to specify time/date?  If not specified use 'now'
 router.route('/tickets/:fromStation/:toStation').get(
 	function(request, response) {
 		httpRequest(
@@ -246,18 +264,9 @@ router.route('/tickets/:fromStation/:toStation').get(
 	}
 ); 
 
-// TODO cache for a while?
 router.route('/elevatorStatus').get(
 	function(request, response) {
-		httpRequest(
-			buildHttpRequestOptions('bsa.aspx?cmd=elev'),
-			function(error, resp, body) {
-				// TODO non-happy path
-				var xmlElevators = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
-					response.jsonp(res.root);
-				});
-			}
-		);
+		response.jsonp(infoCache.getElevatorStatus());
 	}
 );
 
@@ -265,6 +274,12 @@ router.route('/elevatorStatus').get(
 loadStationList();
 every('24h').do(function() {
 	loadStationList();
+});
+
+// Prime the elevator status on startup and read periodically
+loadElevatorStatus();
+every('15m').do(function() {
+	loadElevatorStatus();
 });
 
 app.use(cors());
