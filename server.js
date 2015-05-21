@@ -40,11 +40,11 @@ var infoCache = {
 
 function buildHttpRequestOptions(requestUrl) {
 	return {
-			uri: bartApiBaseUrl + '/' + requestUrl + '&key=' + bartApiKey,
-			method: 'GET',
-			timeout: bartApiTimeout,
-			followRedirect: true,
-			maxRedirects: 10
+		uri: bartApiBaseUrl + '/' + requestUrl + '&key=' + bartApiKey,
+		method: 'GET',
+		timeout: bartApiTimeout,
+		followRedirect: true,
+		maxRedirects: 10
 	};
 };
 
