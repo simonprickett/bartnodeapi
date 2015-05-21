@@ -211,16 +211,22 @@ router.route('/stationDetails/:stationId').get(
 router.route('/station/:latitude/:longitude').get(
 	function(request, response) {
 		var stations = infoCache.getStationList().station;
-		var closestStationAbbr = "FTVL";
+		var closestStation = {};
+		var closestDistance = 999999.9;
+		var userLatitude = parseFloat(request.params.latitude);
+		var userLongitude = parseFloat(request.params.longitude);
 
 		for (var n = 0; n < stations.length; n++) {
 			var thisStation = stations[n];
-			if (thisStation.abbr === closestStationAbbr) {
-				// TODO Add distance field!
-				response.jsonp(thisStation);
-				break;
+			var thisDistance = getDistance(userLatitude, userLongitude, parseFloat(thisStation.gtfs_latitude), parseFloat(thisStation.gtfs_longitude));
+			if (thisDistance < closestDistance) {
+				closestStation = JSON.parse(JSON.stringify(thisStation));
+				closestStation.distance = closestDistance;
+				closestDistance = thisDistance;
 			}
 		}
+
+		response.jsonp(closestStation);
 	}
 );
 
@@ -269,6 +275,12 @@ router.route('/elevatorStatus').get(
 		response.jsonp(infoCache.getElevatorStatus());
 	}
 );
+
+if (typeof(Number.prototype.toRad) === "undefined") {
+  Number.prototype.toRad = function() {
+    return this * Math.PI / 180;
+  }
+}
 
 // Prime the station list on startup and read periodically
 loadStationList();
