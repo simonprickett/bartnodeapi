@@ -233,11 +233,29 @@ router.route('/station/:latitude/:longitude').get(
 // TODO make this real, return all stations with distances and isClosest set
 router.route('/stations/:latitude/:longitude').get(
 	function(request, response) {
-		var stations = infoCache.getStationList().station;
+		var stations = JSON.parse(JSON.stringify(infoCache.getStationList().station));
 		var closestStationAbbr = "FTVL";
+		var userLatitude = parseFloat(request.params.latitude);
+		var userLongitude = parseFloat(request.params.longitude);
 
+		for (var n = 0; n < stations.length; n++) {
+			var thisStation = stations[n];
+			thisStation.distance = getDistance(userLatitude, userLongitude, parseFloat(thisStation.gtfs_latitude), parseFloat(thisStation.gtfs_longitude));
+		}
+
+		stations.sort(function(a, b) {
+			if (a.distance > b.distance) {
+				return 1;
+			}
+
+			if (a.distance < b.distance) {
+				return -1;
+			}
+
+			return 0;
+		});
 		// TODO sorting and stuff
-		response.jsonp(infoCache.getStationList().station);
+		response.jsonp(stations);
 	}
 );
 
