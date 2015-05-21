@@ -10,9 +10,11 @@ var every = require('schedule').every;
 
 var htmlDir = './html/';
 var port = process.env.PORT || 8888;
+
+var bartApiBaseUrl = 'http://api.bart.gov/api';
 // This is a demo key use environment if possible
 var bartApiKey = process.env.BART_API_KEY || 'MW9S-E7SL-26DU-VV8V';
-
+var bartApiTimeout = 10000;
 var stationsInfo = undefined;
 
 var infoCache = {
@@ -36,25 +38,32 @@ var infoCache = {
 	}
 }; 
 
-loadStationList = function() {
-	console.log('Refreshing Station List cache...');
-	httpRequest({
-		uri: 'http://api.bart.gov/api/stn.aspx?cmd=stns&key=' + bartApiKey,
-		method: 'GET',
-		timeout: 10000,
-		followRedirect: true,
-		maxRedirects: 10
-	}, function(error, resp, body) {
-		// TODO non-happy path
-		xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
-			infoCache.updateStationList(res.root.stations);
-			console.log('Station List cache refreshed.');
-			getStationInfo();
-		});
-	});
+function buildHttpRequestOptions(requestUrl) {
+	return {
+			uri: bartApiBaseUrl + '/' + requestUrl + '&key=' + bartApiKey,
+			method: 'GET',
+			timeout: bartApiTimeout,
+			followRedirect: true,
+			maxRedirects: 10
+	};
 };
 
-getStationInfo = function() {
+function loadStationList() {
+	console.log('Refreshing Station List cache...');
+	httpRequest(
+		buildHttpRequestOptions('stn.aspx?cmd=stns'),
+		function(error, resp, body) {
+			// TODO non-happy path
+			xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				infoCache.updateStationList(res.root.stations);
+				console.log('Station List cache refreshed.');
+				getStationInfo();
+			});
+		}
+	);
+};
+
+function getStationInfo() {
 	var stations = infoCache.getStationList().station;
 	var stationInfoURLs = [];
 	var stationDetails = [];
@@ -63,24 +72,21 @@ getStationInfo = function() {
 
 	for (var n = 0; n < stations.length; n++) {
 		var thisStation = stations[n];
-		stationInfoURLs.push('http://api.bart.gov/api/stn.aspx?cmd=stnaccess&orig=' + thisStation.abbr + '&key=' + bartApiKey);
+		stationInfoURLs.push('stn.aspx?cmd=stnaccess&orig=' + thisStation.abbr);
 	}
 
 	async.each(
 		stationInfoURLs, 
 		function(stationInfoURL, callback) {
-			httpRequest({
-				uri: stationInfoURL,
-				method: 'GET',
-				timeout: 10000,
-				followRediect: true,
-				maxRedirects: 10
-			}, function(error, resp, body) {
-				xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
-					stationDetails.push(res.root.stations.station);
-					callback();
-				});
-			});
+			httpRequest(
+				buildHttpRequestOptions(stationInfoURL),
+				function(error, resp, body) {
+					xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+						stationDetails.push(res.root.stations.station);
+						callback();
+					});
+				}
+			);
 		},
 		function(err) {
 			infoCache.updateStationDetails(stationDetails);
@@ -90,7 +96,7 @@ getStationInfo = function() {
 
 };
 
-getDistance = function(latUser, lonUser, latStation, lonStation) {
+function getDistance(latUser, lonUser, latStation, lonStation) {
 	var R = 6371;
 	var dLat = (latStation - latUser).toRad();
 	var dLon = (lonStation - lonUser).toRad();
@@ -111,35 +117,29 @@ router.route('/').get(
 
 router.route('/status').get(
 	function(request, response) {
-		httpRequest({
-			uri: 'http://api.bart.gov/api/bsa.aspx?cmd=count&key=' + bartApiKey,
-			method: 'GET',
-			timeout: 10000,
-			followRedirect: true,
-			maxRedirects: 10
-		}, function(error, resp, body) {
-			// TODO non-happy path
-			var xmlStatus = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
-				response.jsonp(res.root);
-			});
-		});
+		httpRequest(
+			buildHttpRequestOptions('bsa.aspx?cmd=count'),
+			function(error, resp, body) {
+				// TODO non-happy path
+				var xmlStatus = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+					response.jsonp(res.root);
+				});
+			}
+		);
 	}
 );
 
 router.route('/serviceAnnouncements').get(
 	function(request, response) {
-		httpRequest({
-			uri: 'http://api.bart.gov/api/bsa.aspx?cmd=bsa&date=today&key=' + bartApiKey,
-			method: 'GET',
-			timeout: 10000,
-			followRedirect: true,
-			maxRedirects: 10
-		}, function(error, resp, body) {
-			// TODO non happy path
-			var xmlServiceAnnouncements = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
-				response.jsonp(res.root);
-			});
-		});
+		httpRequest(
+			buildHttpRequestOptions('bsa.aspx?cmd=bsa&date=today'),
+			function(error, resp, body) {
+				// TODO non happy path
+				var xmlServiceAnnouncements = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+					response.jsonp(res.root);
+				});
+			}
+		);
 	}
 );
 
@@ -219,54 +219,45 @@ router.route('/stations/:latitude/:longitude').get(
 
 router.route('/departures/:stationId').get(
 	function(request, response) {
-		httpRequest({
-			uri: 'http://api.bart.gov/api/etd.aspx?cmd=etd&orig=' + request.param('stationId') + '&key=' + bartApiKey,
-			method: 'GET',
-			timeout: 10000,
-			followRedirect: true,
-			maxRedirects: 10
-		}, function(error, resp, body) {
-			// TODO non-happy path
-			var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
-				response.jsonp(res.root.station);
-			});
-		});
+		httpRequest(
+			buildHttpRequestOptions('etd.aspx?cmd=etd&orig=' + request.param('stationId')),
+			function(error, resp, body) {
+				// TODO non-happy path
+				var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+					response.jsonp(res.root.station);
+				});
+			}
+		);
 	}
 );
 
 // TODO Add the option to specify time/date?
 router.route('/tickets/:fromStation/:toStation').get(
 	function(request, response) {
-		httpRequest({
-			uri: 'http://api.bart.gov/api/sched.aspx?cmd=depart&orig=' + request.param('fromStation') + '&dest=' + request.param('toStation') + '&time=9:00am' + '&b=0&a=1&key=' + bartApiKey,
-			method: 'GET',
-			timeout: 10000,
-			followRedirect: true,
-			maxRedirects: 10
-		}, function(error, resp, body) {
-			// TODO non-happy path
-			var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
-				response.jsonp(res.root);
-			});
-		});
+		httpRequest(
+			buildHttpRequestOptions('sched.aspx?cmd=depart&orig=' + request.param('fromStation') + '&dest=' + request.param('toStation') + '&time=9:00am&b=0&a=1'),
+			function(error, resp, body) {
+				// TODO non-happy path
+				var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+					response.jsonp(res.root);
+				});
+			}
+		);
 	}
 ); 
 
 // TODO cache for a while?
 router.route('/elevatorStatus').get(
 	function(request, response) {
-		httpRequest({
-			uri: 'http://api.bart.gov/api/bsa.aspx?cmd=elev&key=' + bartApiKey,
-			method: 'GET',
-			timeout: 10000,
-			followRedirect: true,
-			maxRedirects: 10
-		}, function(error, resp, body) {
-			// TODO non-happy path
-			var xmlElevators = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
-				response.jsonp(res.root);
-			});
-		});
+		httpRequest(
+			buildHttpRequestOptions('bsa.aspx?cmd=elev'),
+			function(error, resp, body) {
+				// TODO non-happy path
+				var xmlElevators = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+					response.jsonp(res.root);
+				});
+			}
+		);
 	}
 );
 
