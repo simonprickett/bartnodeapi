@@ -189,6 +189,9 @@ router.route(apiContext + '/station/:stationId').get(
 				break;
 			}
 		}
+
+		// Nothing found!
+		response.jsonp({});
 	}
 );
 
@@ -209,6 +212,9 @@ router.route(apiContext + '/stationDetails/:stationId').get(
 				break;
 			}
 		}
+
+		// Nothing found
+		response.jsonp({});
 	}
 );
 
