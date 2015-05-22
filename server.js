@@ -9,6 +9,7 @@ var async = require('async');
 var every = require('schedule').every;
 
 var htmlDir = './html/';
+var apiContext = '/api';
 var port = process.env.PORT || 8888;
 
 var bartApiBaseUrl = 'http://api.bart.gov/api';
@@ -137,6 +138,12 @@ router.route('/').get(
 	}
 );
 
+router.route(apiContext + '/').get(
+	function(request, response) {
+		response.sendFile('index.html', { root: path.join(__dirname, './html/api') });
+	}
+);
+
 router.route('/status').get(
 	function(request, response) {
 		httpRequest(
@@ -151,7 +158,7 @@ router.route('/status').get(
 	}
 );
 
-router.route('/serviceAnnouncements').get(
+router.route(apiContext + '/serviceAnnouncements').get(
 	function(request, response) {
 		httpRequest(
 			buildHttpRequestOptions('bsa.aspx?cmd=bsa&date=today'),
@@ -165,13 +172,13 @@ router.route('/serviceAnnouncements').get(
 	}
 );
 
-router.route('/stations').get(
+router.route(apiContext + '/stations').get(
 	function(request, response) {
 		response.jsonp(infoCache.getStationList().station);
 	}
 );
 
-router.route('/station/:stationId').get(
+router.route(apiContext + '/station/:stationId').get(
 	function(request, response) {
 		var stations = infoCache.getStationList().station;
 
@@ -185,13 +192,13 @@ router.route('/station/:stationId').get(
 	}
 );
 
-router.route('/stationDetails').get(
+router.route(apiContext + '/stationDetails').get(
 	function(request, response) {
 		response.jsonp(infoCache.getStationDetails());
 	}
 );
 
-router.route('/stationDetails/:stationId').get(
+router.route(apiContext + '/stationDetails/:stationId').get(
 	function(request, response) {
 		var stationDetails = infoCache.getStationDetails();
 
@@ -205,7 +212,7 @@ router.route('/stationDetails/:stationId').get(
 	}
 );
 
-router.route('/station/:latitude/:longitude').get(
+router.route(apiContext + '/station/:latitude/:longitude').get(
 	function(request, response) {
 		var stations = infoCache.getStationList().station;
 		var closestStation = {};
@@ -227,7 +234,7 @@ router.route('/station/:latitude/:longitude').get(
 	}
 );
 
-router.route('/stations/:latitude/:longitude').get(
+router.route(apiContext + '/stations/:latitude/:longitude').get(
 	function(request, response) {
 		var stations = JSON.parse(JSON.stringify(infoCache.getStationList().station));
 		var userLatitude = parseFloat(request.params.latitude);
@@ -252,7 +259,7 @@ router.route('/stations/:latitude/:longitude').get(
 	}
 );
 
-router.route('/departures/:stationId').get(
+router.route(apiContext + '/departures/:stationId').get(
 	function(request, response) {
 		httpRequest(
 			buildHttpRequestOptions('etd.aspx?cmd=etd&orig=' + request.param('stationId')),
@@ -267,7 +274,7 @@ router.route('/departures/:stationId').get(
 );
 
 // TODO Add the option to specify time/date?  If not specified use 'now'
-router.route('/tickets/:fromStation/:toStation').get(
+router.route(apiContext + '/tickets/:fromStation/:toStation').get(
 	function(request, response) {
 		httpRequest(
 			buildHttpRequestOptions('sched.aspx?cmd=depart&orig=' + request.param('fromStation') + '&dest=' + request.param('toStation') + '&time=9:00am&b=0&a=1'),
@@ -281,7 +288,7 @@ router.route('/tickets/:fromStation/:toStation').get(
 	}
 ); 
 
-router.route('/elevatorStatus').get(
+router.route(apiContext + '/elevatorStatus').get(
 	function(request, response) {
 		response.jsonp(infoCache.getElevatorStatus());
 	}
@@ -306,6 +313,6 @@ every('15m').do(function() {
 });
 
 app.use(cors());
-app.use('/api', router);
+app.use('/', router);
 app.listen(port);
 console.log('BART API Server listening on port ' + port);
