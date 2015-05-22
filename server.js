@@ -265,13 +265,27 @@ router.route(apiContext + '/stations/:latitude/:longitude').get(
 	}
 );
 
+router.route(apiContext + '/departures').get(
+	function(request, response) {
+		httpRequest(
+			buildHttpRequestOptions('etd.aspx?cmd=etd&orig=all'),
+			function(error, resp, body) {
+				// TODO non-happy path
+				xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+					response.jsonp(res.root.station);
+				});
+			}
+		);
+	}
+);
+
 router.route(apiContext + '/departures/:stationId').get(
 	function(request, response) {
 		httpRequest(
 			buildHttpRequestOptions('etd.aspx?cmd=etd&orig=' + request.param('stationId')),
 			function(error, resp, body) {
 				// TODO non-happy path
-				var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+				xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
 					response.jsonp(res.root.station);
 				});
 			}
