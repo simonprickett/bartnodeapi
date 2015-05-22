@@ -144,7 +144,7 @@ router.route(apiContext + '/').get(
 	}
 );
 
-router.route('/status').get(
+router.route(apiContext + '/status').get(
 	function(request, response) {
 		httpRequest(
 			buildHttpRequestOptions('bsa.aspx?cmd=count'),
