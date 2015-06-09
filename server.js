@@ -301,6 +301,8 @@ router.route(apiContext + '/tickets/:fromStation/:toStation').get(
 			function(error, resp, body) {
 				// TODO non-happy path
 				var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false, attrkey: 'details' }, function(err, res) {
+					// For some reason this field comes through needing trimming still!
+					res.root.schedule.request.trip.details.origTimeDate = res.root.schedule.request.trip.details.origTimeDate.trim();
 					response.jsonp(res.root);
 				});
 			}
