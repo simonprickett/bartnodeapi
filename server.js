@@ -89,10 +89,16 @@ function loadStationList() {
 	console.log('Refreshing Station List cache...');
 	httpRequest(
 		buildHttpRequestOptions('stn.aspx?cmd=stns'),
-		function(error, resp, body) {
+		function(error, resp, body) {		
 			// TODO non-happy path
+
+			// API still returns COLS incorrectly as 'Coliseum/Oakland Airport'
+			// fixes this to correct new name 'Coliseum'
+			body = body.replace('Coliseum/Oakland Airport', 'Coliseum');
+
 			xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
 				infoCache.updateStationList(res.root.stations);
+
 				console.log('Station List cache refreshed.');
 				getStationInfo();
 			});
@@ -118,6 +124,12 @@ function getStationInfo() {
 			httpRequest(
 				buildHttpRequestOptions(stationInfoURL),
 				function(error, resp, body) {
+					if (stationInfoURL.indexOf('COLS') > -1) {
+						// API still returns COLS incorrectly as 'Coliseum/Oakland Airport'
+						// fixes this to correct new name 'Coliseum'
+						body = body.split('Coliseum/Oakland Airport').join('Coliseum');
+					}
+
 					xmlParser.parseString(body, { trim: true, explicitArray: false, attrkey: 'flags' }, function(err, res) {
 						stationDetails.push(res.root.stations.station);
 						callback();
@@ -271,9 +283,15 @@ router.route(apiContext + '/departures').get(
 			buildHttpRequestOptions('etd.aspx?cmd=etd&orig=all'),
 			function(error, resp, body) {
 				// TODO non-happy path
+
+				// Fix up any references to COLS which has the old name in the API
+				body = body.split('Coliseum/Oakland Airport').join('Coliseum');
+
 				xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
 					// TODO fix single etd at each station
 					// TODO fix single estimate at each etd at each station
+					// TODO fix empty departures for OAKL as no real time there
+					// TODO fix COLS name to Coliseum
 					response.jsonp(res.root.station);
 				});
 			}
@@ -283,34 +301,43 @@ router.route(apiContext + '/departures').get(
 
 router.route(apiContext + '/departures/:stationId').get(
 	function(request, response) {
-		httpRequest(
-			buildHttpRequestOptions('etd.aspx?cmd=etd&orig=' + request.param('stationId')),
-			function(error, resp, body) {
-				// TODO non-happy path
+		if (request.param('stationId') === 'OAKL') {
+			// BART doesn't implement real time estimates for this station
 
-				xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
-					var newArray = [];
-					var n = 0;
+			response.jsonp({ name: "Oakland Airport", abbr: "OAKL", etd: []});
+		} else {
+			httpRequest(
+				buildHttpRequestOptions('etd.aspx?cmd=etd&orig=' + request.param('stationId')),
+				function(error, resp, body) {
+					// TODO non-happy path
 
-					// Fix single etd returned by xmlParser to be in an array e.g. FRMT
-					if (! Array.isArray(res.root.station.etd)) {
-						newArray.push(res.root.station.etd);
-						res.root.station.etd = newArray;
-					}
+					// Fix up any references to COLS which has the old name in the API
+					body = body.split('Coliseum/Oakland Airport').join('Coliseum');
 
-					// Fix single estimates
-					for (n = 0; n < res.root.station.etd.length; n++) {
-						if (! Array.isArray(res.root.station.etd[n].estimate)) {
-							newArray = [];
-							newArray.push(res.root.station.etd[n].estimate);
-							res.root.station.etd[n] = newArray;
+					xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+						var newArray = [];
+						var n = 0;
+
+						// Fix single etd returned by xmlParser to be in an array e.g. FRMT
+						if (! Array.isArray(res.root.station.etd)) {
+							newArray.push(res.root.station.etd);
+							res.root.station.etd = newArray;
 						}
-					}
 
-					response.jsonp(res.root.station);
-				});
-			}
-		);
+						// Fix single estimates
+						for (n = 0; n < res.root.station.etd.length; n++) {
+							if (! Array.isArray(res.root.station.etd[n].estimate)) {
+								newArray = [];
+								newArray.push(res.root.station.etd[n].estimate);
+								res.root.station.etd[n] = newArray;
+							}
+						}
+
+						response.jsonp(res.root.station);
+					});
+				}
+			);
+		}
 	}
 );
 
