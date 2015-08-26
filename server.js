@@ -272,6 +272,8 @@ router.route(apiContext + '/departures').get(
 			function(error, resp, body) {
 				// TODO non-happy path
 				xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+					// TODO fix single etd at each station
+					// TODO fix single estimate at each etd at each station
 					response.jsonp(res.root.station);
 				});
 			}
@@ -285,7 +287,26 @@ router.route(apiContext + '/departures/:stationId').get(
 			buildHttpRequestOptions('etd.aspx?cmd=etd&orig=' + request.param('stationId')),
 			function(error, resp, body) {
 				// TODO non-happy path
+
 				xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+					var newArray = [];
+					var n = 0;
+
+					// Fix single etd returned by xmlParser to be in an array e.g. FRMT
+					if (! Array.isArray(res.root.station.etd)) {
+						newArray.push(res.root.station.etd);
+						res.root.station.etd = newArray;
+					}
+
+					// Fix single estimates
+					for (n = 0; n < res.root.station.etd.length; n++) {
+						if (! Array.isArray(res.root.station.etd[n].estimate)) {
+							newArray = [];
+							newArray.push(res.root.station.etd[n].estimate);
+							res.root.station.etd[n] = newArray;
+						}
+					}
+
 					response.jsonp(res.root.station);
 				});
 			}
