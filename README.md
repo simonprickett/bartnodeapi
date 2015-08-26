@@ -2,6 +2,8 @@
 
 BART JSON API using Node and Express.  Will listen on port 8888, supports JSONP and CORS.
 
+Running at http://bart.crudworks.org/api/
+
 ##Status
 
 * Responses documented here are not currently accurate, this doc needs updating.
