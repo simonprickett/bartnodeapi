@@ -313,9 +313,11 @@ router.route(apiContext + '/departures/:stationId').get(
 
 					// Fix up any references to COLS which has the old name in the API
 					body = body.split('Coliseum/Oakland Airport').join('Coliseum');
+					console.log(body);
 
 					xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
 						var newArray = [];
+						var newObj = {};
 						var n = 0;
 
 						// Fix single etd returned by xmlParser to be in an array e.g. FRMT
@@ -327,9 +329,14 @@ router.route(apiContext + '/departures/:stationId').get(
 						// Fix single estimates
 						for (n = 0; n < res.root.station.etd.length; n++) {
 							if (! Array.isArray(res.root.station.etd[n].estimate)) {
-								newArray = [];
-								newArray.push(res.root.station.etd[n].estimate);
-								res.root.station.etd[n] = newArray;
+								newObj = {
+									destination: res.root.station.etd[n].destination,
+									abbreviation: res.root.station.etd[n].abbreviation,
+									estimate: [
+										res.root.station.etd[n].estimate
+									]
+								}
+								res.root.station.etd[n] = newObj;
 							}
 						}
 
