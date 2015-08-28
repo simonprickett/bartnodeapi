@@ -20,6 +20,7 @@ var stationsInfo = undefined;
 
 var infoCache = {
 	stationList: undefined,
+	stationInfo: undefined,
 	stationAccess: undefined,
 	elevatorStatus: undefined,
 
@@ -29,6 +30,14 @@ var infoCache = {
 
 	updateStationList: function(newStationList) {
 		stationList = newStationList;
+	},
+
+	getStationInfo: function() {
+		return stationInfo;
+	},
+
+	updateStationInfo: function(newStationInfo) {
+		stationInfo = newStationInfo;
 	},
 
 	getStationAccess: function() {
@@ -100,31 +109,34 @@ function loadStationList() {
 				infoCache.updateStationList(res.root.stations);
 
 				console.log('Station List cache refreshed.');
-				getStationInfo();
+				getStationInfoAndAccess();
 			});
 		}
 	);
 };
 
-function getStationInfo() {
+function getStationInfoAndAccess() {
 	var stations = infoCache.getStationList().station;
 	var stationInfoURLs = [];
+	var stationAccessURLs = [];
 	var stationAccess = [];
+	var stationInfo = [];
 
 	console.log('Getting station information...');
 
 	for (var n = 0; n < stations.length; n++) {
 		var thisStation = stations[n];
-		stationInfoURLs.push('stn.aspx?cmd=stnaccess&orig=' + thisStation.abbr);
+		stationInfoURLs.push('stn.aspx?cmd=stninfo&orig=' + thisStation.abbr);
+		stationAccessURLs.push('stn.aspx?cmd=stnaccess&orig=' + thisStation.abbr);
 	}
 
 	async.each(
-		stationInfoURLs, 
-		function(stationInfoURL, callback) {
+		stationAccessURLs, 
+		function(stationAccessURL, callback) {
 			httpRequest(
-				buildHttpRequestOptions(stationInfoURL),
+				buildHttpRequestOptions(stationAccessURL),
 				function(error, resp, body) {
-					if (stationInfoURL.indexOf('COLS') > -1) {
+					if (stationAccessURL.indexOf('COLS') > -1) {
 						// API still returns COLS incorrectly as 'Coliseum/Oakland Airport'
 						// fixes this to correct new name 'Coliseum'
 						body = body.split('Coliseum/Oakland Airport').join('Coliseum');
@@ -140,6 +152,32 @@ function getStationInfo() {
 		function(err) {
 			infoCache.updateStationAccess(stationAccess);
 			console.log('Station Access cache refreshed.');
+		}
+	);
+
+	async.each(
+		stationInfoURLs,
+		function(stationInfoURL, callback) {
+			httpRequest(
+				buildHttpRequestOptions(stationInfoURL),
+				function(error, resp, body) {
+					if (stationInfoURL.indexOf('COLS') > -1) {
+						// API still returns COLS incorrectly as 'Coliseum/Oakland Airport'
+						// fixes this to correct new name 'Coliseum'
+						body = body.split('Coliseum/Oakland Airport').join('Coliseum');
+					}
+
+					xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
+						// TODO Single array item fixes...
+						stationInfo.push(res.root.stations.station);
+						callback();
+					});
+				}
+			);
+		},
+		function(err) {
+			infoCache.updateStationInfo(stationInfo);
+			console.log('Station Info cache refreshed.');
 		}
 	);
 };
@@ -219,6 +257,29 @@ router.route(apiContext + '/stationAccess/:stationId').get(
 
 		for (var n = 0; n < stationAccess.length; n++) {
 			var thisStation = stationAccess[n];
+			if (thisStation.abbr === request.params.stationId) {
+				response.jsonp(thisStation);
+				return;
+			}
+		}
+
+		// Nothing found
+		response.jsonp({});
+	}
+);
+
+router.route(apiContext + '/stationInfo').get(
+	function(request, response) {
+		response.jsonp(infoCache.getStationInfo());
+	}
+);
+
+router.route(apiContext + '/stationInfo/:stationId').get(
+	function(request, response) {
+		var stationInfo = infoCache.getStationInfo();
+
+		for (var n = 0; n < stationInfo.length; n++) {
+			var thisStation = stationInfo[n];
 			if (thisStation.abbr === request.params.stationId) {
 				response.jsonp(thisStation);
 				return;
