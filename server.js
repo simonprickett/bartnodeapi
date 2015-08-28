@@ -20,7 +20,7 @@ var stationsInfo = undefined;
 
 var infoCache = {
 	stationList: undefined,
-	stationDetails: undefined,
+	stationAccess: undefined,
 	elevatorStatus: undefined,
 
 	getStationList: function() {
@@ -31,12 +31,12 @@ var infoCache = {
 		stationList = newStationList;
 	},
 
-	getStationDetails: function() {
-		return stationDetails;
+	getStationAccess: function() {
+		return stationAccess;
 	},
 
-	updateStationDetails: function(newStationDetails) {
-		stationDetails = newStationDetails;
+	updateStationAccess: function(newStationAccess) {
+		stationAccess = newStationAccess;
 	},
 
 	getElevatorStatus: function() {
@@ -109,7 +109,7 @@ function loadStationList() {
 function getStationInfo() {
 	var stations = infoCache.getStationList().station;
 	var stationInfoURLs = [];
-	var stationDetails = [];
+	var stationAccess = [];
 
 	console.log('Getting station information...');
 
@@ -131,15 +131,15 @@ function getStationInfo() {
 					}
 
 					xmlParser.parseString(body, { trim: true, explicitArray: false, attrkey: 'flags' }, function(err, res) {
-						stationDetails.push(res.root.stations.station);
+						stationAccess.push(res.root.stations.station);
 						callback();
 					});
 				}
 			);
 		},
 		function(err) {
-			infoCache.updateStationDetails(stationDetails);
-			console.log('Station Details cache refreshed.');
+			infoCache.updateStationAccess(stationAccess);
+			console.log('Station Access cache refreshed.');
 		}
 	);
 };
@@ -198,7 +198,7 @@ router.route(apiContext + '/station/:stationId').get(
 			var thisStation = stations[n];
 			if (thisStation.abbr === request.params.stationId) {
 				response.jsonp(thisStation);
-				break;
+				return;;
 			}
 		}
 
@@ -207,21 +207,21 @@ router.route(apiContext + '/station/:stationId').get(
 	}
 );
 
-router.route(apiContext + '/stationDetails').get(
+router.route(apiContext + '/stationAccess').get(
 	function(request, response) {
-		response.jsonp(infoCache.getStationDetails());
+		response.jsonp(infoCache.getStationAccess());
 	}
 );
 
-router.route(apiContext + '/stationDetails/:stationId').get(
+router.route(apiContext + '/stationAccess/:stationId').get(
 	function(request, response) {
-		var stationDetails = infoCache.getStationDetails();
+		var stationAccess = infoCache.getStationAccess();
 
-		for (var n = 0; n < stationDetails.length; n++) {
-			var thisStation = stationDetails[n];
+		for (var n = 0; n < stationAccess.length; n++) {
+			var thisStation = stationAccess[n];
 			if (thisStation.abbr === request.params.stationId) {
 				response.jsonp(thisStation);
-				break;
+				return;
 			}
 		}
 
