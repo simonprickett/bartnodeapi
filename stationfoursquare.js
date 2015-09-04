@@ -1,4 +1,5 @@
 // Station Foursquare IDs... TODO!
+// Also needs to add Oakland Airport.
 /*
 stationFourSquareMap["12TH"] = "468eecfdf964a5208f481fe3"
 stationFourSquareMap["16TH"] = "4abff08bf964a520219320e3"
