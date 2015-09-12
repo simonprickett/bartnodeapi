@@ -417,8 +417,18 @@ router.route(apiContext + '/tickets/:fromStation/:toStation').get(
 			function(error, resp, body) {
 				// TODO non-happy path
 				var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false, attrkey: 'details' }, function(err, res) {
+					var newArray = [];
+
 					// For some reason this field comes through needing trimming still!
 					res.root.schedule.request.trip.details.origTimeDate = res.root.schedule.request.trip.details.origTimeDate.trim();
+
+					// Fix single leg object into an array so API returns an array 
+					// regardless of whether the trip is 1,2 or 3 legs
+					if (! Array.isArray(res.root.schedule.request.trip.leg)) {
+						newArray.push(res.root.schedule.request.trip.leg);
+						res.root.schedule.request.trip.leg = newArray;
+					}
+
 					response.jsonp(res.root);
 				});
 			}
