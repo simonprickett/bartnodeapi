@@ -70,6 +70,19 @@ function getDistance(latUser, lonUser, latStation, lonStation) {
 	return d * 0.621371;
 };
 
+function getStationName(abbr) {
+	var stations = infoCache.getStationList().station;
+	var n = 0;
+
+	for (n = 0; n < stations.length; n++) {
+		if (stations[n].abbr === abbr) {
+			return stations[n].name;
+		}
+	}
+
+	return undefined;
+}
+
 function buildHttpRequestOptions(requestUrl) {
 	return {
 		uri: bartApiBaseUrl + '/' + requestUrl + '&key=' + bartApiKey,
@@ -374,7 +387,6 @@ router.route(apiContext + '/departures/:stationId').get(
 
 					// Fix up any references to COLS which has the old name in the API
 					body = body.split('Coliseum/Oakland Airport').join('Coliseum');
-					console.log(body);
 
 					xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
 						var newArray = [];
@@ -413,11 +425,13 @@ router.route(apiContext + '/departures/:stationId').get(
 router.route(apiContext + '/tickets/:fromStation/:toStation').get(
 	function(request, response) {
 		httpRequest(
-			buildHttpRequestOptions('sched.aspx?cmd=depart&orig=' + request.param('fromStation') + '&dest=' + request.param('toStation') + '&time=9:00am&b=0&a=1'),
+			buildHttpRequestOptions('sched.aspx?cmd=depart&orig=' + request.param('fromStation') + '&dest=' + request.param('toStation') + '&time=now&b=0&a=1'),
 			function(error, resp, body) {
 				// TODO non-happy path
 				var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false, attrkey: 'details' }, function(err, res) {
 					var newArray = [];
+					var n = 0;
+					var leg = undefined;
 
 					// For some reason this field comes through needing trimming still!
 					res.root.schedule.request.trip.details.origTimeDate = res.root.schedule.request.trip.details.origTimeDate.trim();
@@ -427,6 +441,14 @@ router.route(apiContext + '/tickets/:fromStation/:toStation').get(
 					if (! Array.isArray(res.root.schedule.request.trip.leg)) {
 						newArray.push(res.root.schedule.request.trip.leg);
 						res.root.schedule.request.trip.leg = newArray;
+					}
+
+					// Enrich legs with full station names for origin, destination, trainHeadStation
+					for (n = 0; n < res.root.schedule.request.trip.leg.length; n++) {
+						leg = res.root.schedule.request.trip.leg[n];
+						leg.details.originName = getStationName(leg.details.origin);
+						leg.details.destinationName = getStationName(leg.details.destination);
+						leg.details.trainHeadStationName = getStationName(leg.details.trainHeadStation);
 					}
 
 					response.jsonp(res.root);
