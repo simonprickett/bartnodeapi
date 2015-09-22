@@ -451,6 +451,12 @@ router.route(apiContext + '/tickets/:fromStation/:toStation').get(
 						leg.details.trainHeadStationName = getStationName(leg.details.trainHeadStation);
 					}
 
+					// Calculate trip duration
+					startDate = new Date(res.root.schedule.request.trip.details.origTimeDate + ' ' + res.root.schedule.request.trip.details.origTimeMin);
+					endDate = new Date(res.root.schedule.request.trip.details.destTimeDate + ' ' + res.root.schedule.request.trip.details.destTimeMin);
+
+					res.root.schedule.request.trip.details.duration = ((endDate - startDate) / 60000)
+
 					response.jsonp(res.root);
 				});
 			}
