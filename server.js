@@ -229,12 +229,14 @@ router.route(apiContext + '/serviceAnnouncements').get(
 				// TODO non happy path
 				var xmlServiceAnnouncements = xmlParser.parseString(body, { trim: true, explicitArray: false }, function(err, res) {
 					var newArray = [];
-					
+
 					// Fix single bsa to be an array
 					if (! Array.isArray(res.root.bsa)) {
 						newArray.push(res.root.bsa);
 						res.root.bsa = newArray;
 					}
+
+					res.root.bsa = res.root.bsa.reverse();
 
 					response.jsonp(res.root);
 				});
