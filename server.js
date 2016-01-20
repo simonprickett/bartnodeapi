@@ -403,6 +403,13 @@ router.route(apiContext + '/departures/:stationId').get(
 						var newObj = {};
 						var n = 0;
 
+						if (res.root.message && res.root.message.error) {
+							if (res.root.message.error.text === 'Invalid orig') {
+								// Unknown station code
+								response.jsonp({});
+								return;
+							}
+						}
 						// Fix single etd returned by xmlParser to be in an array e.g. FRMT
 						if (! Array.isArray(res.root.station.etd)) {
 							newArray.push(res.root.station.etd);
