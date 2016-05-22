@@ -7,6 +7,7 @@ var app = express();
 var router = express.Router();
 var async = require('async');
 var every = require('schedule').every;
+var _ = require('lodash');
 
 var htmlDir = './html/';
 var apiContext = '/api';
@@ -163,6 +164,7 @@ function getStationInfoAndAccess() {
 			);
 		},
 		function(err) {
+			stationAccess = _.sortBy(stationAccess, 'abbr');
 			infoCache.updateStationAccess(stationAccess);
 			console.log('Station Access cache refreshed.');
 		}
@@ -189,6 +191,7 @@ function getStationInfoAndAccess() {
 			);
 		},
 		function(err) {
+			stationInfo = _.sortBy(stationInfo, 'abbr');
 			infoCache.updateStationInfo(stationInfo);
 			console.log('Station Info cache refreshed.');
 		}
