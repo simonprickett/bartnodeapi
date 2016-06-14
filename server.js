@@ -256,11 +256,12 @@ router.route(apiContext + '/stations').get(
 
 router.route(apiContext + '/station/:stationId').get(
 	function(request, response) {
-		var stations = infoCache.getStationList().station;
+		var stations = infoCache.getStationList().station,
+			stationId = request.params.stationId.toUpperCase();
 
 		for (var n = 0; n < stations.length; n++) {
 			var thisStation = stations[n];
-			if (thisStation.abbr === request.params.stationId) {
+			if (thisStation.abbr === stationId) {
 				response.jsonp(thisStation);
 				return;;
 			}
@@ -279,11 +280,12 @@ router.route(apiContext + '/stationAccess').get(
 
 router.route(apiContext + '/stationAccess/:stationId').get(
 	function(request, response) {
-		var stationAccess = infoCache.getStationAccess();
+		var stationAccess = infoCache.getStationAccess(),
+			stationId = request.params.stationId.toUpperCase();
 
 		for (var n = 0; n < stationAccess.length; n++) {
 			var thisStation = stationAccess[n];
-			if (thisStation.abbr === request.params.stationId) {
+			if (thisStation.abbr === stationId) {
 				response.jsonp(thisStation);
 				return;
 			}
@@ -302,11 +304,12 @@ router.route(apiContext + '/stationInfo').get(
 
 router.route(apiContext + '/stationInfo/:stationId').get(
 	function(request, response) {
-		var stationInfo = infoCache.getStationInfo();
+		var stationInfo = infoCache.getStationInfo(),
+			stationId = request.params.stationId.toUpperCase();
 
 		for (var n = 0; n < stationInfo.length; n++) {
 			var thisStation = stationInfo[n];
-			if (thisStation.abbr === request.params.stationId) {
+			if (thisStation.abbr === stationId) {
 				response.jsonp(thisStation);
 				return;
 			}
@@ -388,13 +391,14 @@ router.route(apiContext + '/departures').get(
 
 router.route(apiContext + '/departures/:stationId').get(
 	function(request, response) {
-		if (request.param('stationId') === 'OAKL') {
+		var stationId = request.params.stationId.toUpperCase();
+		if (stationId === 'OAKL') {
 			// BART doesn't implement real time estimates for this station
 
 			response.jsonp({ name: "Oakland Airport", abbr: "OAKL", etd: []});
 		} else {
 			httpRequest(
-				buildHttpRequestOptions('etd.aspx?cmd=etd&orig=' + request.param('stationId')),
+				buildHttpRequestOptions('etd.aspx?cmd=etd&orig=' + stationId),
 				function(error, resp, body) {
 					// TODO non-happy path
 
@@ -444,8 +448,11 @@ router.route(apiContext + '/departures/:stationId').get(
 // TODO Add the option to specify time/date?  If not specified use 'now'
 router.route(apiContext + '/tickets/:fromStation/:toStation').get(
 	function(request, response) {
+		var fromStation = request.params.fromStation.toUpperCase(),
+			toStation = request.params.toStation.toUpperCase();
+
 		httpRequest(
-			buildHttpRequestOptions('sched.aspx?cmd=depart&orig=' + request.param('fromStation') + '&dest=' + request.param('toStation') + '&time=now&b=0&a=1'),
+			buildHttpRequestOptions('sched.aspx?cmd=depart&orig=' + fromStation + '&dest=' + toStation + '&time=now&b=0&a=1'),
 			function(error, resp, body) {
 				// TODO non-happy path
 				var xmlStations = xmlParser.parseString(body, { trim: true, explicitArray: false, attrkey: 'details' }, function(err, res) {
@@ -490,7 +497,7 @@ router.route(apiContext + '/elevatorStatus').get(
 	}
 );
 
-if (typeof(Number.prototype.toRad) === "undefined") {
+if (typeof(Number.prototype.toRad) === 'undefined') {
   Number.prototype.toRad = function() {
     return this * (Math.PI / 180);
   }

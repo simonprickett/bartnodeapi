@@ -3,6 +3,16 @@
 	"version": "0.0.1",
 	"license": "MIT",
 	"description": "Bay Area Rapid Transit JSON API using Node and Express",
+	"author": {
+		"name": "Simon Prickett",
+		"email": "simon@crudworks.org"
+	},
+	"keywords": [
+		"BART",
+		"Transit",
+		"API",
+		"Bay Area Rapid Transit"
+	],
 	"dependencies": {
 		"express": "4.x",
 		"cors": "2.4.x",

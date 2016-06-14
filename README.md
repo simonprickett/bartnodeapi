@@ -34,6 +34,7 @@ node server.js
 * All calls support JSONP, just add callback=&lt;function name&gt; to the URL
 * All calls can be made using CORS (see http://enable-cors.org)
 * The backend XML API that this uses is documented at http://api.bart.gov/
+* Wherever a four character station code is expected, it can be supplied upper or lowercase (POWL/powl will both resolve to Powell Street Station for example)
 
 ###GET BART System Status
 
