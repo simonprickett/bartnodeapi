@@ -210,6 +210,12 @@ router.route(apiContext + '/').get(
 	}
 );
 
+router.route(apiContext + '/swagger.json').get(
+	function(request, response) {
+		response.sendFile('swagger.json', { root: path.join(__dirname, './html/api') });
+	}
+);
+
 router.route(apiContext + '/status').get(
 	function(request, response) {
 		httpRequest(

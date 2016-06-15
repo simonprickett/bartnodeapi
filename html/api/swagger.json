@@ -1,0 +1,828 @@
+{
+    "swagger": "2.0",
+    "host": "bart.crudworks.org",
+    "basePath": "/api",
+    "schemes": [
+        "http"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "info": {
+        "version": "1.0.0",
+        "title": "BART JSON API"
+    },
+    "paths": {
+        "/status": {
+            "get": {
+                "description": "Gets the overall BART system status\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "title": "Status",
+                            "type": "object",
+                            "properties": {
+                                "uri": {
+                                    "type": "string"
+                                },
+                                "date": {
+                                    "type": "string"
+                                },
+                                "time": {
+                                    "type": "string"
+                                },
+                                "traincount": {
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/elevatorStatus": {
+            "get": {
+                "description": "Gets information about elevator outages acrodd the BART system\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "title": "ElevatorStatus",
+                            "type": "object",
+                            "properties": {
+                                "uri": {
+                                    "type": "string"
+                                },
+                                "date": {
+                                    "type": "string"
+                                },
+                                "time": {
+                                    "type": "string"
+                                },
+                                "bsa": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "station": {
+                                            "type": "string"
+                                        },
+                                        "type": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "sms_text": {
+                                            "type": "string"
+                                        },
+                                        "posted": {
+                                            "type": "string"
+                                        },
+                                        "expires": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/serviceAnnouncements": {
+            "get": {
+                "description": "Gets BART service announcements\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "title": "ServiceAnnouncements",
+                            "type": "object",
+                            "properties": {
+                                "uri": {
+                                    "type": "string"
+                                },
+                                "date": {
+                                    "type": "string"
+                                },
+                                "time": {
+                                    "type": "string"
+                                },
+                                "bsa": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "station": {
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "sms_text": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "message": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/stations": {
+            "get": {
+                "description": "Get basic information about all BART stations\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stationSummary"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/station/{stationAbbr}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "stationAbbr",
+                        "in": "path",
+                        "description": "Station Code",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "description": "Get basic information about a single station\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/stationSummary"
+                        }
+                    }
+                }
+            }
+        },
+        "/departures": {
+            "get": {
+                "description": "Get real time departure information for all stations\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stationDepartures"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/departures/{stationAbbr}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "stationAbbr",
+                        "in": "path",
+                        "description": "Station Code",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "description": "Get real time departure information for a single station\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/stationDepartures"
+                        }
+                    }
+                }
+            }
+        },
+        "/stationAccess": {
+            "get": {
+                "description": "Get station access information for all stations\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stationAccess"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/stationAccess/{stationAbbr}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "stationAbbr",
+                        "in": "path",
+                        "description": "Station Code",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "description": "Get station access information for a single station\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/stationAccess"
+                        }
+                    }
+                }
+            }
+        },
+        "/stationInfo": {
+            "get": {
+                "description": "Get station information for all stations\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stationInfo"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/stationInfo/{stationAbbr}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "stationAbbr",
+                        "in": "path",
+                        "description": "Station Code",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "description": "Get station information for a single station\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/stationInfo"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{fromStation}/{toStation}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "fromStation",
+                        "in": "path",
+                        "description": "Station Code for the origin station",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "toStation",
+                        "in": "path",
+                        "description": "Station Code for the destination station",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "description": "Get ticket prices and route between two stations\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "uri": {
+                                    "type": "string"
+                                },
+                                "origin": {
+                                    "type": "string"
+                                },
+                                "destination": {
+                                    "type": "string"
+                                },
+                                "sched_num": {
+                                    "type": "string"
+                                },
+                                "schedule": {
+                                    "type": "object",
+                                    "properties": {
+                                        "date": {
+                                            "type": "string"
+                                        },
+                                        "time": {
+                                            "type": "string"
+                                        },
+                                        "before": {
+                                            "type": "string"
+                                        },
+                                        "after": {
+                                            "type": "string"
+                                        },
+                                        "request": {
+                                            "type": "object",
+                                            "properties": {
+                                                "trip": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "details": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "origin": {
+                                                                    "type": "string"
+                                                                },
+                                                                "destination": {
+                                                                    "type": "string"
+                                                                },
+                                                                "fare": {
+                                                                    "type": "string"
+                                                                },
+                                                                "origTimeMin": {
+                                                                    "type": "string"
+                                                                },
+                                                                "origTimeDate": {
+                                                                    "type": "string"
+                                                                },
+                                                                "destTimeMin": {
+                                                                    "type": "string"
+                                                                },
+                                                                "destTimeDate": {
+                                                                    "type": "string"
+                                                                },
+                                                                "clipper": {
+                                                                    "type": "string"
+                                                                },
+                                                                "tripTime": {
+                                                                    "type": "string"
+                                                                },
+                                                                "duration": {
+                                                                    "type": "integer"
+                                                                }
+                                                            }
+                                                        },
+                                                        "leg": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/tripLeg"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "message": {
+                                    "type": "object",
+                                    "properties": {
+                                        "special_schedule": {
+                                            "type": "string"
+                                        },
+                                        "co2_emissions": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/stations/{latitude}/{longitude}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "latitude",
+                        "in": "path",
+                        "description": "Latitude of the point to order stations by distance from",
+                        "type": "number",
+                        "format": "double",
+                        "required": true
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "path",
+                        "description": "Longitude of the point to order stations by distance from",
+                        "type": "number",
+                        "format": "double",
+                        "required": true
+                    }
+                ],
+                "description": "Get all stations, ordered by distance from a given latitude, longitude point\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stationWithDistance"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/station/{latitude}/{longitude}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "latitude",
+                        "in": "path",
+                        "description": "Latitude of the point to find the closest station to",
+                        "type": "number",
+                        "format": "double",
+                        "required": true
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "path",
+                        "description": "Longitude of the point to find the closest station to",
+                        "type": "number",
+                        "format": "double",
+                        "required": true
+                    }
+                ],
+                "description": "Get details of the closest station to a given latitude, longitude point\n",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/stationWithDistance"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "stationSummary": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "abbr": {
+                    "type": "string"
+                },
+                "gtfs_latitude": {
+                    "type": "string"
+                },
+                "gtfs_longitude": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "county": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "stationDepartures": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "abbr": {
+                    "type": "string"
+                },
+                "etd": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "destination": {
+                                "type": "string"
+                            },
+                            "abbreviation": {
+                                "type": "string"
+                            },
+                            "limited": {
+                                "type": "string"
+                            },
+                            "estimate": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "minutes": {
+                                            "type": "string"
+                                        },
+                                        "platform": {
+                                            "type": "string"
+                                        },
+                                        "direction": {
+                                            "type": "string"
+                                        },
+                                        "length": {
+                                            "type": "string"
+                                        },
+                                        "color": {
+                                            "type": "string"
+                                        },
+                                        "hexcolor": {
+                                            "type": "string"
+                                        },
+                                        "bikeflag": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "stationAccess": {
+            "type": "object",
+            "properties": {
+                "flags": {
+                    "type": "object",
+                    "properties": {
+                        "parking_flag": {
+                            "type": "string"
+                        },
+                        "bike_flag": {
+                            "type": "string"
+                        },
+                        "bike_station_flag": {
+                            "type": "string"
+                        },
+                        "locker_flag": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "abbr": {
+                    "type": "string"
+                },
+                "entering": {
+                    "type": "string"
+                },
+                "exiting": {
+                    "type": "string"
+                },
+                "parking": {
+                    "type": "string"
+                },
+                "fill_time": {
+                    "type": "string"
+                },
+                "car_share": {
+                    "type": "string"
+                },
+                "lockers": {
+                    "type": "string"
+                },
+                "bike_station_text": {
+                    "type": "string"
+                },
+                "destinations": {
+                    "type": "string"
+                },
+                "transit_info": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                }
+            }
+        },
+        "stationInfo": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "abbr": {
+                    "type": "string"
+                },
+                "gtfs_latitude": {
+                    "type": "string"
+                },
+                "gtfs_longitude": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                },
+                "north_routes": {
+                    "type": "object",
+                    "properties": {
+                        "route": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "south_routes": {
+                    "type": "object",
+                    "properties": {
+                        "route": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "north_platforms": {
+                    "type": "object",
+                    "properties": {
+                        "platform": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "south_platforms": {
+                    "type": "object",
+                    "properties": {
+                        "platform": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "platform_info": {
+                    "type": "string"
+                },
+                "intro": {
+                    "type": "string"
+                },
+                "cross_street": {
+                    "type": "string"
+                },
+                "food": {
+                    "type": "string"
+                },
+                "shopping": {
+                    "type": "string"
+                },
+                "attraction": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                }
+            }
+        },
+        "tripLeg": {
+            "type": "object",
+            "properties": {
+                "details": {
+                    "type": "object",
+                    "properties": {
+                        "order": {
+                            "type": "string"
+                        },
+                        "transfercode": {
+                            "type": "string"
+                        },
+                        "origin": {
+                            "type": "string"
+                        },
+                        "destination": {
+                            "type": "string"
+                        },
+                        "origTimeMin": {
+                            "type": "string"
+                        },
+                        "origTimeDate": {
+                            "type": "string"
+                        },
+                        "destTimeMin": {
+                            "type": "string"
+                        },
+                        "destTimeDate": {
+                            "type": "string"
+                        },
+                        "line": {
+                            "type": "string"
+                        },
+                        "bikeflag": {
+                            "type": "string"
+                        },
+                        "trainHeadStation": {
+                            "type": "string"
+                        },
+                        "trainIdx": {
+                            "type": "string"
+                        },
+                        "originName": {
+                            "type": "string"
+                        },
+                        "destinationName": {
+                            "type": "string"
+                        },
+                        "trainHeadStationName": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "stationWithDistance": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "abbr": {
+                    "type": "string"
+                },
+                "gtfs_latitude": {
+                    "type": "string"
+                },
+                "gtfs_longitude": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "county": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                },
+                "distance": {
+                    "type": "number",
+                    "format": "double"
+                }
+            }
+        }
+    }
+}
