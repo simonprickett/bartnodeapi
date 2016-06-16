@@ -10,7 +10,8 @@
     ],
     "info": {
         "version": "1.0.0",
-        "title": "BART JSON API"
+        "title": "BART JSON API",
+        "description": "JSON wrapper for the BART transit API."
     },
     "paths": {
         "/status": {
@@ -24,19 +25,29 @@
                             "type": "object",
                             "properties": {
                                 "uri": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "URI of the underlying BART API call",
+                                    "example": "http://api.bart.gov/api/bsa.aspx?cmd=count"
                                 },
                                 "date": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Date that the status was fetched from BART",
+                                    "example": "06/15/2016"
                                 },
                                 "time": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Time that the status was fetched from BART",
+                                    "example": "14:21:00 PM PDT"
                                 },
                                 "traincount": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "The number of trains currently operating",
+                                    "example": "50"
                                 },
                                 "message": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "System wide status message, if one applies",
+                                    "example": ""
                                 }
                             }
                         }
@@ -46,7 +57,7 @@
         },
         "/elevatorStatus": {
             "get": {
-                "description": "Gets information about elevator outages acrodd the BART system\n",
+                "description": "Gets information about elevator outages across the BART system\n",
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -55,13 +66,19 @@
                             "type": "object",
                             "properties": {
                                 "uri": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "URI of the underlying BART API call",
+                                    "example": "http://api.bart.gov/api/bsa.aspx?cmd=elev"
                                 },
                                 "date": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Date that the status was fetched from BART",
+                                    "example": "06/15/2016"
                                 },
                                 "time": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Time that the status was fetched from BART",
+                                    "example": "14:13:00 PM PDT"
                                 },
                                 "bsa": {
                                     "type": "object",
@@ -70,32 +87,48 @@
                                             "type": "object",
                                             "properties": {
                                                 "id": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "description": "The BART Service Announcement ID for this message",
+                                                    "example": "147945"
                                                 }
                                             }
                                         },
                                         "station": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "The station code that the status message applies to, or BART for system wide messages",
+                                            "example": "BART"
                                         },
                                         "type": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "The message type, for this response will always be ELEVATOR",
+                                            "example": "ELEVATOR"
                                         },
                                         "description": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Long format text for the elevator status message",
+                                            "example": "There are three elevators out of service at this time: El Cerrito Plaza S.F./Fremont Platform Elevator, Ashby Street Elevator and Embarcadero Street Elevator. Thank you."
                                         },
                                         "sms_text": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Short format text for the elevator status message, that will fit in a SMS message",
+                                            "example": "3 elevs out of svc PLZA s.f./FRMT plat elev, ASBY st elev and EMBR st elev."
                                         },
                                         "posted": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Date / time that the message was posted",
+                                            "example": "Wed Jun 15 2016 10:37 AM PDT"
                                         },
                                         "expires": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Date / time that the message expires, or blank",
+                                            "example": "Wed Jun 15 2016 23:30 PM PDT"
                                         }
                                     }
                                 },
                                 "message": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Additional message, expect this to be blank",
+                                    "example": ""
                                 }
                             }
                         }
@@ -114,13 +147,19 @@
                             "type": "object",
                             "properties": {
                                 "uri": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "URI of the underlying BART API call",
+                                    "example": "http://api.bart.gov/api/bsa.aspx?cmd=bsa&date=today"
                                 },
                                 "date": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Date that the service announcements were fetched from BART",
+                                    "example": "06/15/2016"
                                 },
                                 "time": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Time that the service announcements were fetched from BART",
+                                    "example": "14:31:00 PM PDT"
                                 },
                                 "bsa": {
                                     "type": "array",
@@ -128,19 +167,27 @@
                                         "type": "object",
                                         "properties": {
                                             "station": {
-                                                "type": "string"
+                                                "type": "string",
+                                                "description": "Station affected by the announcement, blank if none",
+                                                "example": ""
                                             },
                                             "description": {
-                                                "type": "string"
+                                                "type": "string",
+                                                "description": "Long format text description of the announcement",
+                                                "example": "No delays reported."
                                             },
                                             "sms_text": {
-                                                "type": "string"
+                                                "type": "string",
+                                                "description": "Short format text description of the announcement, fits in an SMS message",
+                                                "example": "No delays reported."
                                             }
                                         }
                                     }
                                 },
                                 "message": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Additional message, expect this to be blank",
+                                    "example": ""
                                 }
                             }
                         }
@@ -166,15 +213,13 @@
         },
         "/station/{stationAbbr}": {
             "get": {
-                "parameters": [
-                    {
-                        "name": "stationAbbr",
-                        "in": "path",
-                        "description": "Station Code",
-                        "type": "string",
-                        "required": true
-                    }
-                ],
+                "parameters": [{
+                    "name": "stationAbbr",
+                    "in": "path",
+                    "description": "Station Code",
+                    "type": "string",
+                    "required": true
+                }],
                 "description": "Get basic information about a single station\n",
                 "responses": {
                     "200": {
@@ -204,15 +249,13 @@
         },
         "/departures/{stationAbbr}": {
             "get": {
-                "parameters": [
-                    {
-                        "name": "stationAbbr",
-                        "in": "path",
-                        "description": "Station Code",
-                        "type": "string",
-                        "required": true
-                    }
-                ],
+                "parameters": [{
+                    "name": "stationAbbr",
+                    "in": "path",
+                    "description": "Station Code",
+                    "type": "string",
+                    "required": true
+                }],
                 "description": "Get real time departure information for a single station\n",
                 "responses": {
                     "200": {
@@ -242,15 +285,13 @@
         },
         "/stationAccess/{stationAbbr}": {
             "get": {
-                "parameters": [
-                    {
-                        "name": "stationAbbr",
-                        "in": "path",
-                        "description": "Station Code",
-                        "type": "string",
-                        "required": true
-                    }
-                ],
+                "parameters": [{
+                    "name": "stationAbbr",
+                    "in": "path",
+                    "description": "Station Code",
+                    "type": "string",
+                    "required": true
+                }],
                 "description": "Get station access information for a single station\n",
                 "responses": {
                     "200": {
@@ -280,15 +321,13 @@
         },
         "/stationInfo/{stationAbbr}": {
             "get": {
-                "parameters": [
-                    {
-                        "name": "stationAbbr",
-                        "in": "path",
-                        "description": "Station Code",
-                        "type": "string",
-                        "required": true
-                    }
-                ],
+                "parameters": [{
+                    "name": "stationAbbr",
+                    "in": "path",
+                    "description": "Station Code",
+                    "type": "string",
+                    "required": true
+                }],
                 "description": "Get station information for a single station\n",
                 "responses": {
                     "200": {
@@ -302,22 +341,19 @@
         },
         "/tickets/{fromStation}/{toStation}": {
             "get": {
-                "parameters": [
-                    {
-                        "name": "fromStation",
-                        "in": "path",
-                        "description": "Station Code for the origin station",
-                        "type": "string",
-                        "required": true
-                    },
-                    {
-                        "name": "toStation",
-                        "in": "path",
-                        "description": "Station Code for the destination station",
-                        "type": "string",
-                        "required": true
-                    }
-                ],
+                "parameters": [{
+                    "name": "fromStation",
+                    "in": "path",
+                    "description": "Station Code for the origin station",
+                    "type": "string",
+                    "required": true
+                }, {
+                    "name": "toStation",
+                    "in": "path",
+                    "description": "Station Code for the destination station",
+                    "type": "string",
+                    "required": true
+                }],
                 "description": "Get ticket prices and route between two stations\n",
                 "responses": {
                     "200": {
@@ -326,31 +362,47 @@
                             "type": "object",
                             "properties": {
                                 "uri": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "URI of the underlying BART API call",
+                                    "example": "http://api.bart.gov/api/sched.aspx?cmd=depart&orig=SFIA&dest=FTVL&time=now&b=0&a=1"
                                 },
                                 "origin": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Station code for the originating station",
+                                    "example": "SFIA"
                                 },
                                 "destination": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "Station code for the destination station",
+                                    "example": "FTVL"
                                 },
                                 "sched_num": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "BART schedule number",
+                                    "example": "39"
                                 },
                                 "schedule": {
                                     "type": "object",
                                     "properties": {
                                         "date": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Schedule date",
+                                            "example": "Jun 15 2016"
                                         },
                                         "time": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Schedule time",
+                                            "example": "2:53 PM"
                                         },
                                         "before": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Ignore, will always be 0",
+                                            "example": "0"
                                         },
                                         "after": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Ignore, will always be 1",
+                                            "example": "1"
                                         },
                                         "request": {
                                             "type": "object",
@@ -362,34 +414,54 @@
                                                             "type": "object",
                                                             "properties": {
                                                                 "origin": {
-                                                                    "type": "string"
+                                                                    "type": "string",
+                                                                    "description": "Station code of the originating station",
+                                                                    "example": "SFIA"
                                                                 },
                                                                 "destination": {
-                                                                    "type": "string"
+                                                                    "type": "string",
+                                                                    "description": "Station code of the destination station",
+                                                                    "example": "FTVL"
                                                                 },
                                                                 "fare": {
-                                                                    "type": "string"
+                                                                    "type": "string",
+                                                                    "description": "Base fare for this trip in US Dollars",
+                                                                    "example": "9.50"
                                                                 },
                                                                 "origTimeMin": {
-                                                                    "type": "string"
+                                                                    "type": "string",
+                                                                    "description": "Time that the trip starts",
+                                                                    "example": "2:54 PM"
                                                                 },
                                                                 "origTimeDate": {
-                                                                    "type": "string"
+                                                                    "type": "string",
+                                                                    "description": "Date that the trip is on",
+                                                                    "example": "06/15/2016"
                                                                 },
                                                                 "destTimeMin": {
-                                                                    "type": "string"
+                                                                    "type": "string",
+                                                                    "description": "Time that the trip ends",
+                                                                    "example": "3:44 PM"
                                                                 },
                                                                 "destTimeDate": {
-                                                                    "type": "string"
+                                                                    "type": "string",
+                                                                    "description": "Date the the trip ends",
+                                                                    "example": "06/15/2016"
                                                                 },
                                                                 "clipper": {
-                                                                    "type": "string"
+                                                                    "type": "string",
+                                                                    "description": "Discount in US Dollars taken off the fare for paying with a Clipper card",
+                                                                    "example": "3.55"
                                                                 },
                                                                 "tripTime": {
-                                                                    "type": "string"
+                                                                    "type": "string",
+                                                                    "description": "Not used, expect this to be blank",
+                                                                    "example": ""
                                                                 },
                                                                 "duration": {
-                                                                    "type": "integer"
+                                                                    "type": "integer",
+                                                                    "description": "Expected trip duration in minutes",
+                                                                    "example": 52
                                                                 }
                                                             }
                                                         },
@@ -409,10 +481,14 @@
                                     "type": "object",
                                     "properties": {
                                         "special_schedule": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Information that may affect the trip",
+                                            "example": "Elevator out for maintenance at El Cerrito Plaza 6/6."
                                         },
                                         "co2_emissions": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Information about CO2 emissions saved by this trip",
+                                            "example": "<p>CO<sub>2</sub> emissions saved by this BART trip: <strong>20.6 pounds.</strong> <a href=\"http://www.bart.gov/guide/carbon\">Read more</a></p>"
                                         }
                                     }
                                 }
@@ -424,24 +500,21 @@
         },
         "/stations/{latitude}/{longitude}": {
             "get": {
-                "parameters": [
-                    {
-                        "name": "latitude",
-                        "in": "path",
-                        "description": "Latitude of the point to order stations by distance from",
-                        "type": "number",
-                        "format": "double",
-                        "required": true
-                    },
-                    {
-                        "name": "longitude",
-                        "in": "path",
-                        "description": "Longitude of the point to order stations by distance from",
-                        "type": "number",
-                        "format": "double",
-                        "required": true
-                    }
-                ],
+                "parameters": [{
+                    "name": "latitude",
+                    "in": "path",
+                    "description": "Latitude of the point to order stations by distance from",
+                    "type": "number",
+                    "format": "double",
+                    "required": true
+                }, {
+                    "name": "longitude",
+                    "in": "path",
+                    "description": "Longitude of the point to order stations by distance from",
+                    "type": "number",
+                    "format": "double",
+                    "required": true
+                }],
                 "description": "Get all stations, ordered by distance from a given latitude, longitude point\n",
                 "responses": {
                     "200": {
@@ -458,24 +531,21 @@
         },
         "/station/{latitude}/{longitude}": {
             "get": {
-                "parameters": [
-                    {
-                        "name": "latitude",
-                        "in": "path",
-                        "description": "Latitude of the point to find the closest station to",
-                        "type": "number",
-                        "format": "double",
-                        "required": true
-                    },
-                    {
-                        "name": "longitude",
-                        "in": "path",
-                        "description": "Longitude of the point to find the closest station to",
-                        "type": "number",
-                        "format": "double",
-                        "required": true
-                    }
-                ],
+                "parameters": [{
+                    "name": "latitude",
+                    "in": "path",
+                    "description": "Latitude of the point to find the closest station to",
+                    "type": "number",
+                    "format": "double",
+                    "required": true
+                }, {
+                    "name": "longitude",
+                    "in": "path",
+                    "description": "Longitude of the point to find the closest station to",
+                    "type": "number",
+                    "format": "double",
+                    "required": true
+                }],
                 "description": "Get details of the closest station to a given latitude, longitude point\n",
                 "responses": {
                     "200": {
@@ -493,31 +563,49 @@
             "type": "object",
             "properties": {
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The full name of the station",
+                    "example": "Orinda"
                 },
                 "abbr": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The four character code for the station (API accepts these in both lower and upper case, but always returns them in upper case",
+                    "example": "ORIN"
                 },
                 "gtfs_latitude": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The latitude of the station",
+                    "example": "37.87836087"
                 },
                 "gtfs_longitude": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The longitude of the station",
+                    "example": "-122.1837911"
                 },
                 "address": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The street address of the station",
+                    "example": "11 Camino Pablo"
                 },
                 "city": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The city that the station is in",
+                    "example": "Orinda"
                 },
                 "county": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The code name of county that the station is in",
+                    "example": "contracosta"
                 },
                 "state": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The state that the station is in (always CA)",
+                    "example": "CA"
                 },
                 "zipcode": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The zipcode that the station is in",
+                    "example": "94563"
                 }
             }
         },
@@ -525,10 +613,14 @@
             "type": "object",
             "properties": {
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Name of the station that the departures are from",
+                    "example": "Orinda"
                 },
                 "abbr": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Four character code name of the station that the departures are from",
+                    "example": "ORIN"
                 },
                 "etd": {
                     "type": "array",
@@ -536,13 +628,19 @@
                         "type": "object",
                         "properties": {
                             "destination": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Name of the station that the departing train terminates at",
+                                "example": "24th Street"
                             },
                             "abbreviation": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Four character code name of the station that the deparing train terminates at",
+                                "example": "24TH"
                             },
                             "limited": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Indicates whether this is a limited stop train (1) or an all stops train (0)",
+                                "example": "0"
                             },
                             "estimate": {
                                 "type": "array",
@@ -550,25 +648,39 @@
                                     "type": "object",
                                     "properties": {
                                         "minutes": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Number of minutes until the train departs (trains leaving immediately will show \"Leaving\" here)",
+                                            "example": "4"
                                         },
                                         "platform": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Platform number that the train departs from",
+                                            "example": "2"
                                         },
                                         "direction": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Direction that the train is traveling in",
+                                            "example": "South"
                                         },
                                         "length": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "The number of train cars that make up this train",
+                                            "example": "9"
                                         },
                                         "color": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "The line color that the train is operating on",
+                                            "example": "YELLOW"
                                         },
                                         "hexcolor": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Hex color code for the line color that the train is operating on",
+                                            "example": "#ffff33"
                                         },
                                         "bikeflag": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "description": "Flag to indicate whether bikes are allowed on the train (1) or not (0)",
+                                            "example": "1"
                                         }
                                     }
                                 }
@@ -585,54 +697,86 @@
                     "type": "object",
                     "properties": {
                         "parking_flag": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Indicates whether there is parking (1) at the station, or not (0)",
+                            "example": "1"
                         },
                         "bike_flag": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Indicates whether bike racks are available (1) at the station, or not (0)",
+                            "example": "0"
                         },
                         "bike_station_flag": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Indiates whether a bike station is available (1) at the station, or not (0)",
+                            "example": "1"
                         },
                         "locker_flag": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Indicates whether bike lockers are available (1) at the station, or not (0)",
+                            "example": "1"
                         }
                     }
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The full name of the station",
+                    "example": "Millbrae"
                 },
                 "abbr": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The four character code name of the station",
+                    "example": "MLBR"
                 },
                 "entering": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Access details for entering BART at this station",
+                    "example": "<p>BART and Caltrain boarding platforms at Millbrae Station are on the ground level. The concourse is elevated.</p> <p>There are two street-level entrances and two street-level entry elevators at this joint-use BART/Caltrain Station. The BART street entrance and street elevator are on the east entry plaza. The Caltrain street entrance and street elevator are on the west entry plaza. Both street elevators are outside the paid area.</p> <p>When you exit the street elevator you will arrive on the elevated concourse level outside the paid area where the station agent is located.</p> <p>To ride, process your ticket and take the platform elevator down to the train boarding area. You will arrive in the middle of the platform boarding area.</p>"
                 },
                 "exiting": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Access details for exiting BART at this station",
+                    "example": "<p>BART and Caltrain boarding platforms at Millbrae Station are on the ground level. The concourse is elevated.</p> <p>The platform elevator is in the middle of the boarding area. When you exit the platform elevator you will arrive on the elevated concourse outside the paid area where the station agent is located.</p> <p>To exit, process your ticket and take the street elevator down to the street. This is a joint-use BART/Caltrain Station: if you are exiting BART you will arrive at the east plaza exit. If you are exiting Caltrain you will arrive at the west plaza exit.</p>"
                 },
                 "parking": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Parking details for this station",
+                    "example": "<p>Parking is available at Millbrae Station and there's a $2.00 daily fee. Other options include Monthly Reserved, Daily and Carpool parking. See the <a href=\"http://www.bart.gov/guide/parking\">parking section</a> for details about each program.</p> <p><a href=\"http://www.bart.gov/docs/permit/BART_Parking_Milbrae.pdf\">Map of parking locations</a></p>"
                 },
                 "fill_time": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Estimated time that the parking at this station fills up (may be blank)",
+                    "example": "6:30 AM"
                 },
                 "car_share": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Unknown at this time, trying to source an example usage for this field",
+                    "example": ""
                 },
                 "lockers": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Information about bike lockers at this station.  Will be set if locker_flag is set to 1",
+                    "example": "44 shared use electronic lockers are located at this station. Read more about <a href=\"http://www.bart.gov/guide/bikes\">electronic lockers</a>."
                 },
                 "bike_station_text": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Information about the bike station at this station.  Will be set if bike_station_flag is set to 1",
+                    "example": "Attended bike parking is available on the street level on Shattuck Avenue above the Downtown Berkeley Station. <a target=\"_blank\" href=\"http://bartbikestation.com/\">Learn more ...</a>"
                 },
                 "destinations": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Information about points of interest local to this station",
+                    "example": "<p>To find a destination near this station, visit the <a href=\"http://www.bart.gov/stations/mlbr/neighborhood\">neighborhood section</a>.</p>"
                 },
                 "transit_info": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Information about other public transit available to/from this station",
+                    "example": "<p>Millbrae Station is served by <a href=\"http://www.samtrans.org/\">Samtrans</a><a href=\"http://www.samtrans.org/schedules.html\"></a> and <a href=\"http://www.caltrain.com\">Caltrain</a> which features a convenient cross-platform connection.</p> <p><strong>Try BART's free trip planning service!</strong><br />For a personalized trip plan with BART and connecting transit, call the BART <a href=\"http://www.bart.gov/siteinfo/contact\">Transit Information Center</a>. It's fast, it's easy, and it's tailored just for you!</p>"
                 },
                 "link": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "A link to the BART web page for this station",
+                    "example": "http://www.bart.gov/stations/MLBR"
                 }
             }
         },
@@ -640,31 +784,49 @@
             "type": "object",
             "properties": {
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The full name of the station",
+                    "example": "Daly City"
                 },
                 "abbr": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The four character station code for the station",
+                    "example": "DALY"
                 },
                 "gtfs_latitude": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The latitude of the station",
+                    "example": "37.70612055"
                 },
                 "gtfs_longitude": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The longitude of the station",
+                    "example": "-122.4690807"
                 },
                 "address": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The address of the station",
+                    "example": "500 John Daly Blvd."
                 },
                 "city": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The city that the station is in",
+                    "example": "Daly City"
                 },
-                "country": {
-                    "type": "string"
+                "county": {
+                    "type": "string",
+                    "description": "The code for the county that the station is located in",
+                    "example": "sanmateo"
                 },
                 "state": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The state that the station is located in (always CA)",
+                    "example": "CA"
                 },
                 "zipcode": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The zipcode that the station is located in",
+                    "example": "94014"
                 },
                 "north_routes": {
                     "type": "object",
@@ -672,7 +834,9 @@
                         "route": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Name of a Northbound route that passes through this station",
+                                "example": "ROUTE 8"
                             }
                         }
                     }
@@ -683,7 +847,9 @@
                         "route": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Name of a Southbound route that passes through this station",
+                                "example": "ROUTE 7"
                             }
                         }
                     }
@@ -694,7 +860,9 @@
                         "platform": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Number of a platform that Northbound trains call at",
+                                "example": "1"
                             }
                         }
                     }
@@ -705,31 +873,47 @@
                         "platform": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Number of a platform that Southbound trains call at",
+                                "example": "3"
                             }
                         }
                     }
                 },
                 "platform_info": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Text displayed on platform level electronic signage",
+                    "example": "Always check destination signs and listen for departure announcements."
                 },
                 "intro": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Short text description of the station",
+                    "example": "Daly City, located at the northernmost edge of San Mateo County, is often called the \"Gateway to the Peninsula.\""
                 },
                 "cross_street": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Cross street location description for the station",
+                    "example": "Nearby Cross: Delong St."
                 },
                 "food": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Details of food and restaurants nearby the station",
+                    "example": "Nearby restaurant reviews from <a href=\"http://www.yelp.com/search?find_desc=Restaurant+&amp;ns=1&amp;rpp=10&amp;find_loc=500 John Daly Blvd. Daly City, CA 94014\" rel=\"external\">yelp.com</a>"
                 },
                 "shopping": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Details of shopping nearby the station",
+                    "example": "Local shopping from <a href=\"http://www.yelp.com/search?find_desc=Shopping+&amp;ns=1&amp;rpp=10&amp;find_loc=500 John Daly Blvd. Daly City, CA 94014\" rel=\"external\">yelp.com</a>"
                 },
                 "attraction": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Details of local attractions for this station",
+                    "example": "More station area attractions from <a href=\"http://www.yelp.com/search?find_desc=+&amp;ns=1&amp;rpp=10&amp;find_loc=500 John Daly Blvd. Daly City, CA 94014\" rel=\"external\">yelp.com</a>"
                 },
                 "link": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Link to the BART website page for this station",
+                    "example": "http://www.bart.gov/stations/DALY"
                 }
             }
         },
@@ -740,49 +924,79 @@
                     "type": "object",
                     "properties": {
                         "order": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The sequence in which trip legs need to be completed to reach the destination",
+                            "example": "1"
                         },
                         "transfercode": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Unknown at this point",
+                            "example": "N"
                         },
                         "origin": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The four character station code for the origin station for this leg",
+                            "example": "SFIA"
                         },
                         "destination": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The four character station code for the destination station for this leg",
+                            "example": "BALB"
                         },
                         "origTimeMin": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The time that the leg starts at the originating station",
+                            "example": "9:09 AM"
                         },
                         "origTimeDate": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The date that the leg starts at the originating station",
+                            "example": "06/16/2016"
                         },
                         "destTimeMin": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The time that the leg arrives at the destination station",
+                            "example": "9:27 AM"
                         },
                         "destTimeDate": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The date that the leg arrives at the destination station",
+                            "example": "06/16/2016"
                         },
                         "line": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The BART line that this leg is on",
+                            "example": "ROUTE 2"
                         },
                         "bikeflag": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Flag indicating whether bikes are allowed on this leg (1), or not (0)",
+                            "example": "1"
                         },
                         "trainHeadStation": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The four character station code for the station that the train for this leg terminates at",
+                            "example": "PITT"
                         },
                         "trainIdx": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Unknown at this point",
+                            "example": "28"
                         },
                         "originName": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The full name of the station that this leg originates at",
+                            "example": "San Francisco Int'l Airport"
                         },
                         "destinationName": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The full name of the station that this leg ends at",
+                            "example": "Balboa Park"
                         },
                         "trainHeadStationName": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The full name of the station that the train for this leg terminates at",
+                            "example": "Pittsburg/Bay Point"
                         }
                     }
                 }
@@ -792,35 +1006,55 @@
             "type": "object",
             "properties": {
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The full name of the station",
+                    "example": "Daly City"
                 },
                 "abbr": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The four character station code for the station",
+                    "example": "DALY"
                 },
                 "gtfs_latitude": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The latitude of the station",
+                    "example": "37.70612055"
                 },
                 "gtfs_longitude": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The longitude of the station",
+                    "example": "-122.4690807"
                 },
                 "address": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The address of the station",
+                    "example": "500 John Daly Blvd."
                 },
                 "city": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The city that the station is in",
+                    "example": "Daly City"
                 },
                 "county": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The code for the county that the station is located in",
+                    "example": "sanmateo"
                 },
                 "state": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The state that the station is located in (always CA)",
+                    "example": "CA"
                 },
                 "zipcode": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The zipcode that the station is located in",
+                    "example": "94014"
                 },
                 "distance": {
                     "type": "number",
-                    "format": "double"
+                    "format": "double",
+                    "description": "Distance in miles between this station and the specified lat/long",
+                    "example": "1.2823865911803616"
                 }
             }
         }
