@@ -164,7 +164,7 @@ function getStationInfoAndAccess() {
 			);
 		},
 		function(err) {
-			stationAccess = _.sortBy(stationAccess, 'abbr');
+			stationAccess = _.sortBy(stationAccess, 'name');
 			infoCache.updateStationAccess(stationAccess);
 			console.log('Station Access cache refreshed.');
 		}
@@ -191,7 +191,7 @@ function getStationInfoAndAccess() {
 			);
 		},
 		function(err) {
-			stationInfo = _.sortBy(stationInfo, 'abbr');
+			stationInfo = _.sortBy(stationInfo, 'name');
 			infoCache.updateStationInfo(stationInfo);
 			console.log('Station Info cache refreshed.');
 		}
