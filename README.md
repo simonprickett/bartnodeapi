@@ -1,19 +1,19 @@
-#BART Node API
+# BART Node API
 
 BART JSON API using Node and Express.  Will listen on port 8888, supports JSONP and CORS.
 
-Running at http://bart.crudworks.org/api/
+Running at [http://bart.crudworks.org/api/](http://bart.crudworks.org/api/)
 
-##Status
+## Status
 
 * Responses documented here are not currently accurate, this doc needs updating.
 
-##Installation
+## Installation
 
 * Install node
 * Make sure node is on your path
 
-##Building
+## Building
 
 Get depenencies:
 
@@ -21,7 +21,7 @@ Get depenencies:
 npm install
 ```
 
-##Running
+## Running
 
 Start:
 
@@ -29,14 +29,14 @@ Start:
 node server.js
 ```
 
-##Example Calls and Responses
+## Example Calls and Responses
 
 * All calls support JSONP, just add callback=&lt;function name&gt; to the URL
 * All calls can be made using CORS (see http://enable-cors.org)
 * The backend XML API that this uses is documented at http://api.bart.gov/
 * Wherever a four character station code is expected, it can be supplied upper or lowercase (POWL/powl will both resolve to Powell Street Station for example)
 
-###GET BART System Status
+### GET BART System Status
 
 Returns basic information about the state of BART.
 
@@ -58,7 +58,7 @@ http://<hostname>:8888/api/status
 
 * TODO: Field by field explanation of the response
 
-###GET All Station Details
+### GET All Station Details
 
 Returns overview details and ID codes for all stations.
 
@@ -104,7 +104,7 @@ http://<hostname>:8888/api/stations
 
 * TODO: Field by field explanation of the response
 
-###GET an Individual Station's Details
+### GET an Individual Station's Details
 
 ```
 http://<hostname>:8888/api/stations/<stationId>
@@ -130,7 +130,7 @@ http://<hostname>:8888/api/stations/<stationId>
 
 * TODO: Field by field explanation of the response
 
-###GET Details for the Station Closest to a Point
+### GET Details for the Station Closest to a Point
 
 ```
 http://<hostname>:8888/api/stations/<latitude>/<longitude>
@@ -158,7 +158,7 @@ http://<hostname>:8888/api/stations/<latitude>/<longitude>
 
 * TODO: Field by field explanation of the response
 
-###GET Train Departures from an Individual Station
+### GET Train Departures from an Individual Station
 
 ```
 http://<hostname>:8888/api/departures/<stationId>
@@ -211,7 +211,7 @@ http://<hostname>:8888/api/departures/<stationId>
 
 * TODO: Field by field explanation of the response
 
-###GET Ticket Price and Trip Details Between Two Stations
+### GET Ticket Price and Trip Details Between Two Stations
 
 ```
 http://<hostname>:8888/api/tickets/<fromStationId>/<toStationId>
